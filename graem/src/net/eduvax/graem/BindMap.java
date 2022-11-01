@@ -36,7 +36,7 @@ public class BindMap {
         Vector<Entry> v=_map.get(name);
         if (v!=null) {
             for (Entry e: v) {
-                e._avatar.setAttribute(name,values);
+                e._avatar.setAttribute(e._attrName,values);
             }
         }
     }

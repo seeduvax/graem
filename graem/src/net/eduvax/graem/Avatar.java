@@ -30,11 +30,11 @@ public abstract class Avatar implements IAvatar {
     }
     
     @Override public void setLocation(double x, double y, double z) {
-        _location=_cb.v(x,y,z);
+        _location=_cb.v(_time,x,y,z);
     }
 
     @Override public void setAttitude(double w,double x, double y, double z) {
-        _attitude=_cb.q(x,y,z,w);
+        _attitude=_cb.q(_time,x,y,z,w);
     }
 
     @Override public synchronized void setAttribute(String attrName,double[] values) {
@@ -52,6 +52,9 @@ public abstract class Avatar implements IAvatar {
             else if (values.length==4) {
                 setAttitude(values[0],values[1],values[2],values[3]);
             }
+        }
+        else if ("time".equals(attrName)) {
+            setTime(values[0]);
         }
         else {
             _attrChangesQueue.add(new AttrChange(attrName,values));

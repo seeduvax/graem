@@ -18,11 +18,16 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import com.jme3.math.Quaternion;
 
+import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+import org.luaj.vm2.lib.jse.JsePlatform;
 /**
  *
  */
 public class TCPServer implements IAvatarsHandler, Runnable {
-    public TCPServer(int port) {
+    public TCPServer(int port, Graem graem) {
+        _graem=graem;
         try {
             _server=new ServerSocket(port);
             start();
@@ -65,6 +70,7 @@ ex.printStackTrace();
     private boolean _run=false;
     private Vector<IAvatar> _avatars=new Vector<IAvatar>();
     ServerSocket _server;
+    Graem _graem;
     
     class SocketHandler implements Runnable {
         public SocketHandler(Socket socket) {
@@ -73,57 +79,17 @@ ex.printStackTrace();
         }
 
         @Override public void run() {
+            Globals globals = JsePlatform.standardGlobals();
+            globals.set("graem",CoerceJavaToLua.coerce(_graem));
             try {
                 BufferedReader in=new BufferedReader(new InputStreamReader(_socket.getInputStream()));
                 String line=in.readLine();
                 while (line!=null) {
-                    StringTokenizer st=new StringTokenizer(line," ");
-                    String cmd=st.nextToken();
-                    if ("avatar".equals(cmd)) {
-                        _avatar=_avatars.elementAt(Integer.parseInt(st.nextToken()));
+                    if (line.startsWith("{")) {
+                        line="graem:set("+line+")";
                     }
-                    else if ("location".equals(cmd)) {
-                        double x=Double.parseDouble(st.nextToken());
-                        double y=Double.parseDouble(st.nextToken());
-                        double z=Double.parseDouble(st.nextToken());
-                        _avatar.setLocation(x,y,z); 
-                    }
-                    else if ("attitude".equals(cmd)) {
-                        double w=Double.parseDouble(st.nextToken());
-                        double x=Double.parseDouble(st.nextToken());
-                        double y=Double.parseDouble(st.nextToken());
-                        if (st.hasMoreTokens()) {
-                            double z=Double.parseDouble(st.nextToken());
-                            _avatar.setAttitude(w,x,y,z);
-                        }
-                        else {
-                            float f[]={(float)w,(float)x,(float)y};
-                            Quaternion q=new Quaternion(f);
-                            _avatar.setAttitude(q.getW(),q.getX(),q.getY(),q.getZ());
-                        } 
-                    }
-                    else if ("attribute".equals(cmd)) {
-                        String name=st.nextToken();
-                        double value=0;
-                        if (st.hasMoreTokens()) {
-                            value=Double.parseDouble(st.nextToken());
-                        }
-                        double d[]={value};
-                        _avatar.setAttribute(name,d);
-                    }
-                    else if ("basis".equals(cmd)) {
-                        String name=st.nextToken();
-                        try {
-                            Class c=Class.forName(name);
-                            IChangeOfBasis cb=(IChangeOfBasis)c.newInstance();
-                            _avatar.setChangeOfBasis(cb);
-                        }
-                        catch (Exception ex) {
-                            System.err.println(
-                                "Can't set basis to avatar, basis not found: "
-                                +name);
-                        }
-                    }
+                    LuaValue statement=globals.load(line);
+                    statement.call();
                     line=in.readLine();
                 }
             }

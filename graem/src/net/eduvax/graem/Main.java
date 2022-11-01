@@ -15,12 +15,12 @@ import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
-//import org.luaj.vm2.lib.jse.*;
 
 /**
  *
@@ -28,6 +28,7 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 public class Main {
     public static void main(String[] args) {
         View app = new View();
+        Vector<String> files=new Vector<String>();
         AppSettings settings = app.getSettings();
         boolean toon=false;
         int tcpPort=0;
@@ -49,23 +50,25 @@ public class Main {
                     tcpPort=Integer.parseInt(st.nextToken());
                 }
             }
+            else {
+                files.addElement(arg);
+            }
         }
-        app.add(new DummyAvatar());
-/*
-        app.add(new DummyAvatar());
-        app.add(new Playfield());
-*/
         app.add(new DefaultLight());
         if (toon) {
             app.add(new ToonStyle());
         }
+        Graem graem=new Graem(app);
         if (tcpPort>0) {
-            app.add(new TCPServer(tcpPort));
+            app.add(new TCPServer(tcpPort,graem));
         }
 
         Globals globals = JsePlatform.standardGlobals();
-        Graem graem=new Graem(app);
         globals.set("graem",CoerceJavaToLua.coerce(graem));
+        for (String file: files) {
+            LuaValue l=globals.loadfile(file);
+            l.call();
+        }
 
         app.start();
         try {
