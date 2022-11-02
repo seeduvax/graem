@@ -2,10 +2,21 @@ graem:setup({
     a={
         class="net.eduvax.graem.DummyAvatar",
         bind={
-            time="sim_time",
+            time="time",
             location="world.body.loc",
-        }
+            attitude="world.body.q",
+            split="split"
+        },
+        cob="net.eduvax.graem.BasisLLAtoJMErel"
     },
     b={ class="net.eduvax.graem.Playfield" },
+    traj={
+        class="net.eduvax.graem.Trajectory",
+        bind={
+            time="time",
+            location="world.body.loc",
+        },
+        cob="net.eduvax.graem.BasisLLAtoJMErel"
+    },
     light={class="net.edvuvax.graem.DefaultLight"}
 })

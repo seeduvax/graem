@@ -61,6 +61,17 @@ public class Graem {
                             bind(bn.arg(2).toString(),(IAvatar)o,bk.toString());
                         } 
                     }
+                    LuaValue cob=def.get("cob");
+                    if (!cob.isnil()) {
+                        try {
+                            Class c=Class.forName(cob.toString());
+                            IChangeOfBasis b=(IChangeOfBasis)c.newInstance();
+                            ((IAvatar)o).setChangeOfBasis(b);
+                        }
+                        catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
                 }
             }
         }

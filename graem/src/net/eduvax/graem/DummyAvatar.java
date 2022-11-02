@@ -10,8 +10,6 @@
 package net.eduvax.graem;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.effect.ParticleEmitter;
-import com.jme3.effect.ParticleMesh.Type;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
@@ -40,14 +38,9 @@ public class DummyAvatar extends Avatar implements ISceneComposition {
         float f[]={(float)Math.PI/2,0,0};
         Quaternion q=new Quaternion(f);
         _tail.setLocalRotation(q);
-        _exhaust=new ParticleEmitter("exhaust",Type.Triangle,100);
-        _exhaust.setLocalTranslation(0,-1,0);
-        _exhaust.getParticleInfluencer().setInitialVelocity(new Vector3f(0,-1,0));
-        _exhaust.getParticleInfluencer().setVelocityVariation(0.3f);
         _node = new Node("dummy");
         _node.attachChild(head);
         _node.attachChild(_tail);
-        _node.attachChild(_exhaust);
         Material mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
         mat.setBoolean("UseMaterialColors",true);
         mat.setColor("Ambient",new ColorRGBA(1,1,1,0.5f));
@@ -55,23 +48,19 @@ public class DummyAvatar extends Avatar implements ISceneComposition {
         mat.setColor("Specular",ColorRGBA.Yellow);
         mat.setFloat("Shininess", 96f);
         _node.setMaterial(mat);
-        mat=new Material(assetManager,"Common/MatDefs/Misc/Particle.j3md");
-        _exhaust.setImagesX(15);
-        mat.setTexture("Texture", assetManager.loadTexture("res/textures/smoke.png"));
-        _exhaust.setMaterial(mat);
         view.getRootNode().attachChild(_node);
         _node.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
     }
-    @Override public void update(float tpf) {
-        _node.setLocalTranslation(getLocation());
-        _node.setLocalRotation(getAttitude());
+    @Override public synchronized void update(float tpf) {
+        _node.setLocalTranslation(
+                _node.getLocalTranslation().interpolateLocal(getLocation(),0.2f));
+        Quaternion q=_node.getLocalRotation();
+        q.nlerp(getAttitude(),0.2f);
+        _node.setLocalRotation(q);
 
         Avatar.AttrChange ac=pollAttrChange();
         while (ac!=null) {
-            if ("smoke".equals(ac._name)) {
-                _exhaust.setParticlesPerSec((float)ac._values[0]*10f);
-            }
-            else if ("split".equals(ac._name)) {
+            if ("split".equals(ac._name)&&ac._values[0]==1) {
                 _split=true;
             }
             ac=pollAttrChange();
@@ -82,7 +71,6 @@ public class DummyAvatar extends Avatar implements ISceneComposition {
         }
     }
     private Node _node;
-    private ParticleEmitter _exhaust;
     private Geometry _tail;
     private boolean _split=false;
 }

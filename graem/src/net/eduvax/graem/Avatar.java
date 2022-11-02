@@ -34,7 +34,7 @@ public abstract class Avatar implements IAvatar {
     }
 
     @Override public void setAttitude(double w,double x, double y, double z) {
-        _attitude=_cb.q(_time,x,y,z,w);
+        _attitude=_cb.q(_time,w,x,y,z);
     }
 
     @Override public synchronized void setAttribute(String attrName,double[] values) {
@@ -50,7 +50,9 @@ public abstract class Avatar implements IAvatar {
                 setAttitude(q.getW(),q.getX(),q.getY(),q.getZ());
             }
             else if (values.length==4) {
-                setAttitude(values[0],values[1],values[2],values[3]);
+                // For most quaternion libraries, the serialisation order is:
+                // X, Y, Z, W.
+                setAttitude(values[3],values[0],values[1],values[2]);
             }
         }
         else if ("time".equals(attrName)) {
