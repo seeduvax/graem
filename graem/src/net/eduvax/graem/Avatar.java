@@ -79,6 +79,16 @@ public abstract class Avatar implements IAvatar {
         return _attrChangesQueue.poll();
     }
 
+    // ------------------------------------------------------------------------
+    // INamed Object implementation
+    @Override public void setName(String name) {
+        _name=name;
+    }
+    @Override public String getName() {
+        return _name;
+    }
+    
+    private String _name;
     private double _time;
     private Vector3f _location=new Vector3f();
     private Quaternion _attitude=new Quaternion();

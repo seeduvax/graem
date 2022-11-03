@@ -24,7 +24,7 @@ import com.jme3.shadow.DirectionalLightShadowRenderer;
 /**
  *
  */
-public class DefaultLight implements ISceneComposition {
+public class DefaultLight extends SceneComposition {
     @Override public void build(View view) {
         Node parent=view.getRootNode();
 
@@ -53,7 +53,5 @@ public class DefaultLight implements ISceneComposition {
         fpp.addFilter(new FXAAFilter());
         viewPort.addProcessor(fpp);
 
-    }
-    @Override public void update(float tpf) {
     }
 }

@@ -1,5 +1,5 @@
 /*
- * @file ISceneComposition.java
+ * @file INamedObject.java
  *
  * Copyright 2022 Sebastien Devaux. All rights reserved.
  * Use is subject to license terms.
@@ -12,7 +12,7 @@ package net.eduvax.graem;
 /**
  *
  */
-public interface ISceneComposition extends INamedObject {
-    void build(View view);
-    void update(float tpf);
+public interface INamedObject {
+    void setName(String name);
+    String getName();
 }

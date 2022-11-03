@@ -25,6 +25,9 @@ public class Graem {
         try {
             Class c=Class.forName(className);
             Object o=c.newInstance();
+            if (o instanceof INamedObject) {
+                ((INamedObject)o).setName(name);
+            }
             if (o instanceof ISceneComposition) {
                 _view.add((ISceneComposition)o);
             }
@@ -40,37 +43,25 @@ public class Graem {
     }
 
     public void setup(LuaValue cfgTable) {
-        LuaValue k=LuaValue.NIL;
-        boolean completed=false;
-        while (!completed) {
-            Varargs n=cfgTable.next(k);
-            k=n.arg1();
-            completed=k.isnil();
-            if (!completed) {
-                LuaValue def=n.arg(2);
-                Object o=create(k.toString(),def.get("class").toString());
-                if (o instanceof IAvatar) {
-                    LuaValue bind=def.get("bind");
-                    LuaValue bk=LuaValue.NIL;
-                    boolean bCompleted=false;
-                    while (!bCompleted) {
-                        Varargs bn=bind.next(bk);
-                        bk=bn.arg1();
-                        bCompleted=bk.isnil();
-                        if (!bCompleted) {
-                            bind(bn.arg(2).toString(),(IAvatar)o,bk.toString());
-                        } 
+        LuaValueIterator it=new LuaValueIterator(cfgTable);
+        while (it.hasNext()) {
+            it.next();
+            Object o=create(it.key().toString(),it.value().get("class").toString());
+            if (o instanceof IAvatar) {
+                LuaValueIterator bindIt=new LuaValueIterator(it.value().get("bind"));
+                while (bindIt.hasNext()) {
+                    bindIt.next();
+                    bind(bindIt.value().toString(),(IAvatar)o,bindIt.key().toString());
+                }
+                LuaValue cob=it.value().get("cob");
+                if (!cob.isnil()) {
+                    try {
+                        Class c=Class.forName(cob.toString());
+                        IChangeOfBasis b=(IChangeOfBasis)c.newInstance();
+                        ((IAvatar)o).setChangeOfBasis(b);
                     }
-                    LuaValue cob=def.get("cob");
-                    if (!cob.isnil()) {
-                        try {
-                            Class c=Class.forName(cob.toString());
-                            IChangeOfBasis b=(IChangeOfBasis)c.newInstance();
-                            ((IAvatar)o).setChangeOfBasis(b);
-                        }
-                        catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
                     }
                 }
             }
@@ -82,20 +73,15 @@ public class Graem {
     }
 
     public void set(LuaValue t) {
-        LuaValue k=LuaValue.NIL;
-        boolean completed=false;
-        while (!completed) {
-            Varargs n=t.next(k);
-            k=n.arg1();
-            completed=k.isnil();
-            if (!completed) {
-                LuaValue vt=n.arg(2);
-                double[] values=new double[vt.length()];
-                for (int i=0;i<vt.length();i++) {
-                    values[i]=vt.get(i+1).todouble();
-                }
-                _bindMap.handleData(k.toString(),values);
+        LuaValueIterator it=new LuaValueIterator(t);
+        while (it.hasNext()) {
+            it.next();
+            LuaValue vt=it.value();
+            double[] values=new double[vt.length()];
+            for (int i=0;i<vt.length();i++) {
+                values[i]=vt.get(i+1).todouble();
             }
+            _bindMap.handleData(it.key().toString(),values);
         }
     }
 

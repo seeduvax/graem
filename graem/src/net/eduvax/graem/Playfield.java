@@ -27,7 +27,7 @@ import com.jme3.renderer.queue.RenderQueue;
 /**
  *
  */
-public class Playfield implements ISceneComposition {
+public class Playfield extends SceneComposition {
     private AssetManager _assetManager;
 
     private void addGrid(String name, Node parent,
@@ -65,20 +65,22 @@ public class Playfield implements ISceneComposition {
     @Override public void build(View view) {
         Node parent=view.getRootNode();
         _assetManager=view.getAssetManager();
+        Node playfield=new Node(getName());
+        parent.attachChild(playfield);
 
         Node ground=new Node("Ground");
         addTransparentBox("NE",ground,500f,0.01f,500f,new Vector3f(-500,-0.005f,-500),new ColorRGBA(0.6f,0.6f,0.8f,0.7f));
         addTransparentBox("NW",ground,500f,0.01f,500f,new Vector3f(-500,-0.005f,500),new ColorRGBA(0.6f,0.8f,0.6f,0.7f));
         addTransparentBox("SE",ground,500f,0.01f,500f,new Vector3f(500,-0.005f,500),new ColorRGBA(0.8f,0.6f,0.6f,0.7f));
         addTransparentBox("sW",ground,500f,0.01f,500f,new Vector3f(500,-0.005f,-500),new ColorRGBA(0.8f,0.8f,0.6f,0.7f));
-        parent.attachChild(ground);
+        playfield.attachChild(ground);
 
         Node grid=new Node("Grid");
         addGrid("NE",grid,51,51,10f,new Vector3f(-500, 0, -500),ColorRGBA.Black,2);
         addGrid("NW",grid,51,51,10f,new Vector3f(-500, 0, 0),ColorRGBA.Black,2);
         addGrid("SE",grid,51,51,10f,null,ColorRGBA.Black,2);
         addGrid("SW",grid,51,51,10f,new Vector3f(0, 0, -500),ColorRGBA.Black,2);
-        parent.attachChild(grid);
+        playfield.attachChild(grid);
 
 
         Material tb = new Material(_assetManager, "Common/MatDefs/Light/Lighting.j3md");
@@ -96,14 +98,12 @@ public class Playfield implements ISceneComposition {
             plate.setQueueBucket(RenderQueue.Bucket.Transparent);
             plate.setMaterial(tb);
             plate.setQueueBucket(RenderQueue.Bucket.Transparent);
-            parent.attachChild(plate);
+            playfield.attachChild(plate);
             addGrid("Grid"+i,parent,101,101,10f,new Vector3f(-500, 1000.0f*i, -500),ColorRGBA.Black,2);
         }
 
-        parent.attachChild(SkyFactory.createSky(_assetManager,
+        playfield.attachChild(SkyFactory.createSky(_assetManager,
                           "res/textures/sky/skysphere1.jpg", 
                            SkyFactory.EnvMapType.EquirectMap));
-    }
-    @Override public void update(float tpf) {
     }
 }

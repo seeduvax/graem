@@ -38,7 +38,7 @@ public class DummyAvatar extends Avatar implements ISceneComposition {
         float f[]={(float)Math.PI/2,0,0};
         Quaternion q=new Quaternion(f);
         _tail.setLocalRotation(q);
-        _node = new Node("dummy");
+        _node = new Node(getName());
         _node.attachChild(head);
         _node.attachChild(_tail);
         Material mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
