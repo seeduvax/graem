@@ -46,18 +46,20 @@ public class View extends SimpleApplication {
             _avatars.add((IAvatar)comp);
         }
     }
-
+/*
     public void add(IAvatarsHandler handler) {
         _avatarsHandlers.add(handler);
     }
-    
+*/  
     @Override public void simpleInitApp() {
         for (ISceneComposition obj: _sceneElements) {
             obj.build(this);
         }
+/*
         for (IAvatarsHandler handler: _avatarsHandlers) {
             handler.setAvatars(_avatars);
         }
+*/
         setChase(_selAvatar);
         inputManager.addMapping("nextCam",new KeyTrigger(KeyInput.KEY_PGUP));
         inputManager.addListener(new ActionListener() {
@@ -138,7 +140,7 @@ public class View extends SimpleApplication {
     private Vector<ISceneComposition> _sceneElements=
                                            new Vector<ISceneComposition>();
     private Vector<IAvatar> _avatars=new Vector<IAvatar>();
-    private Vector<IAvatarsHandler> _avatarsHandlers=new Vector<IAvatarsHandler>();
+//    private Vector<IAvatarsHandler> _avatarsHandlers=new Vector<IAvatarsHandler>();
     private AppSettings _settings=new AppSettings(true);
     private int _selAvatar=0;
 }

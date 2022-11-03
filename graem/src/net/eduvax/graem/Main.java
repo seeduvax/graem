@@ -59,8 +59,10 @@ public class Main {
             app.add(new ToonStyle());
         }
         Graem graem=new Graem(app);
+
+        TCPServer tcpServer=null;
         if (tcpPort>0) {
-            app.add(new TCPServer(tcpPort,graem));
+            tcpServer=new TCPServer(tcpPort,graem);
         }
 
         Globals globals = JsePlatform.standardGlobals();
@@ -84,6 +86,9 @@ public class Main {
         }
         catch (Exception ex) {
             ex.printStackTrace();
+        }
+        if (tcpServer!=null) {
+            tcpServer.stop();
         }
     }
 }

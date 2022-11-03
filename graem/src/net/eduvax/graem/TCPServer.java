@@ -25,7 +25,7 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 /**
  *
  */
-public class TCPServer implements IAvatarsHandler, Runnable {
+public class TCPServer implements Runnable {
     public TCPServer(int port, Graem graem) {
         _graem=graem;
         try {
@@ -39,8 +39,10 @@ ex.printStackTrace();
     }
 
     public void start() {
-        Thread th=new Thread(this);
-        th.start();
+        if (_th==null) {
+            _th=new Thread(this);
+            _th.start();
+        }
     }
 
     @Override public void run() {
@@ -60,22 +62,25 @@ ex.printStackTrace();
 
     public void stop() {
         _run=false;
+        if (_th!=null) {
+            try {
+                _th.join();
+            }
+            catch (InterruptedException ex) {
+                // interrupt in join ignored.
+            }
+            _th=null;
+        }
     }
 
-    @Override public void setAvatars(Vector<IAvatar> avatars) {
-        _avatars=avatars;
-    }
-
-    
+    private Thread _th=null;
     private boolean _run=false;
-    private Vector<IAvatar> _avatars=new Vector<IAvatar>();
     ServerSocket _server;
     Graem _graem;
     
     class SocketHandler implements Runnable {
         public SocketHandler(Socket socket) {
             _socket=socket;
-            _avatar=_avatars.elementAt(0);
         }
 
         @Override public void run() {
@@ -99,7 +104,6 @@ ex.printStackTrace();
             }
         }
 
-        private IAvatar _avatar;
         private Socket _socket;
     }
 }
