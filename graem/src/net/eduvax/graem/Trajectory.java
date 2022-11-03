@@ -28,7 +28,7 @@ public class Trajectory extends Avatar implements ISceneComposition {
         _mat=new Material(view.getAssetManager(),"Common/MatDefs/Misc/Unshaded.j3md");
         _mat.getAdditionalRenderState().setLineWidth(2f);
         _mat.setColor("Color",ColorRGBA.Red);
-        _node=new Node("trajectory");
+        _node=new Node(getName());
         view.getRootNode().attachChild(_node);
         _count=0;
     }

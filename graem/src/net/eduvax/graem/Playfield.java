@@ -99,7 +99,7 @@ public class Playfield extends SceneComposition {
             plate.setMaterial(tb);
             plate.setQueueBucket(RenderQueue.Bucket.Transparent);
             playfield.attachChild(plate);
-            addGrid("Grid"+i,parent,101,101,10f,new Vector3f(-500, 1000.0f*i, -500),ColorRGBA.Black,2);
+            addGrid("Grid"+i,playfield,101,101,10f,new Vector3f(-500, 1000.0f*i, -500),ColorRGBA.Black,2);
         }
 
         playfield.attachChild(SkyFactory.createSky(_assetManager,

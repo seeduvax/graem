@@ -22,7 +22,7 @@ import com.jme3.texture.Texture;
 /**
  *
  */
-public class ToonStyle implements ISceneComposition {
+public class ToonStyle extends SceneComposition {
     private void makeToonish(Spatial spatial, View view){
         if (spatial instanceof Node){
             Node n = (Node) spatial;
@@ -52,7 +52,5 @@ public class ToonStyle implements ISceneComposition {
             fpp.addFilter(toon);
             view.getViewPort().addProcessor(fpp);
         }
-    }
-    @Override public void update(float tpf) {
     }
 }

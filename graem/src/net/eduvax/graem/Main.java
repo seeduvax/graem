@@ -73,20 +73,9 @@ public class Main {
         }
 
         app.start();
-        try {
-            BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
-            String line=in.readLine();
-            while (line!=null) {
-                if (line!="") {
-                    LuaValue statement=globals.load(line);
-                    statement.call();
-                }
-                line=in.readLine();
-            }
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        LuaRunner lua=new LuaRunner(graem,System.in);
+        lua.setPrompt(System.out,"GraEm> ");
+        lua.run();
         if (tcpServer!=null) {
             tcpServer.stop();
         }

@@ -10,10 +10,12 @@
 package net.eduvax.graem;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.AssetManager;
+import com.jme3.font.BitmapText;
 import com.jme3.input.ChaseCamera;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
@@ -39,28 +41,17 @@ public class View extends SimpleApplication {
     public AppSettings getSettings() {
         return _settings;
     }
-
-    public void add(ISceneComposition comp) {
-        _sceneElements.add(comp);
-        if (comp instanceof IAvatar) {
-            _avatars.add((IAvatar)comp);
-        }
+    public synchronized void add(ISceneComposition comp) {
+        _toAdd.add(comp);
     }
-/*
-    public void add(IAvatarsHandler handler) {
-        _avatarsHandlers.add(handler);
-    }
-*/  
     @Override public void simpleInitApp() {
-        for (ISceneComposition obj: _sceneElements) {
-            obj.build(this);
-        }
-/*
-        for (IAvatarsHandler handler: _avatarsHandlers) {
-            handler.setAvatars(_avatars);
-        }
-*/
-        setChase(_selAvatar);
+        _hudText=new BitmapText(guiFont,false);
+        _hudText.setColor(ColorRGBA.Yellow);
+        _hudText.setSize(guiFont.getCharSet().getRenderedSize());
+        _hudText.setLocalTranslation(10f,10f+_hudText.getLineHeight(),0);
+        _hudText.setText("Hello Graem");
+        guiNode.attachChild(_hudText); 
+
         inputManager.addMapping("nextCam",new KeyTrigger(KeyInput.KEY_PGUP));
         inputManager.addListener(new ActionListener() {
             @Override 
@@ -78,19 +69,23 @@ public class View extends SimpleApplication {
     }
 
     public void nextCam() {
-        _selAvatar++;
-        if (_selAvatar>rootNode.getChildren().size()) {
-            _selAvatar=0;
+        if (rootNode.getChildren().size()>0) {
+            _selAvatar++;
+            if (_selAvatar>=rootNode.getChildren().size()) {
+                _selAvatar=0;
+            }
+            setChase(_selAvatar);
         }
-        setChase(_selAvatar);
     }
 
     public void prevCam() {
-        _selAvatar--;
-        if (_selAvatar<0) {
-            _selAvatar=_sceneElements.size();
+        if (rootNode.getChildren().size()>0) {
+            _selAvatar--;
+            if (_selAvatar<0) {
+                _selAvatar=rootNode.getChildren().size()-1;
+            }
+            setChase(_selAvatar);
         }
-        setChase(_selAvatar);
     }
 
     
@@ -106,6 +101,7 @@ public class View extends SimpleApplication {
             _chaseCam.setMinVerticalRotation((float)-Math.PI);
             s.removeControl(ChaseCamera.class);
             s.addControl(_chaseCam);
+            _hudText.setText("Chasing "+s.getName());
             _chaseCam.setEnabled(true);
         }
         else {
@@ -117,12 +113,12 @@ public class View extends SimpleApplication {
         Spatial s=null;
         try {
             s=rootNode.getChildren().get(i);
+            setChase(s);
         }
         catch (IndexOutOfBoundsException ex) {
             // don't care out of bounds, 
             // it's a kind of reset...
         }
-        setChase(s);
     }
     public void setChase(String name) {
         setChase(rootNode.getChild(name));
@@ -132,15 +128,26 @@ public class View extends SimpleApplication {
         return rootNode;
     }
     @Override public void simpleUpdate(float tpf) {
+        synchronized(this) {
+            if (_toAdd.size()>0) {
+                for (ISceneComposition comp: _toAdd) {
+                    comp.build(this);
+                    _sceneElements.add(comp);
+                }
+                _toAdd.clear();
+                _selAvatar=rootNode.getChildren().size()-1;
+                setChase(_selAvatar);
+            }
+        }
         for (ISceneComposition c: _sceneElements) {
             c.update(tpf);
         }
     }
     
+    private Vector<ISceneComposition> _toAdd=new Vector<ISceneComposition>();
     private Vector<ISceneComposition> _sceneElements=
                                            new Vector<ISceneComposition>();
-    private Vector<IAvatar> _avatars=new Vector<IAvatar>();
-//    private Vector<IAvatarsHandler> _avatarsHandlers=new Vector<IAvatarsHandler>();
     private AppSettings _settings=new AppSettings(true);
     private int _selAvatar=0;
+    private BitmapText _hudText;
 }

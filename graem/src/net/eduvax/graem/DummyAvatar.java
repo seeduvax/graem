@@ -28,19 +28,30 @@ import com.jme3.scene.shape.Sphere;
  *
  */
 public class DummyAvatar extends Avatar implements ISceneComposition {
+
+    private void addOrientationMarker(String name,Material mat,ColorRGBA c,float x, float z) {
+        Material m=mat.clone();
+        m.setColor("Ambient",c);
+        Geometry g=new Geometry("name",new Box(0.05f,1,0.05f));
+        g.setLocalTranslation(x,-0.05f,z);
+        g.setMaterial(m);
+        _tail.attachChild(g);
+    }
     @Override public void build(View view) {
         AssetManager assetManager=view.getAssetManager();
 
         Geometry head=new Geometry("head",new Sphere(20,20,0.5f));
 
         head.setLocalTranslation(0,1,0);
-        _tail=new Geometry("tail",new Cylinder(20,20,0.5f,2,true));
+        _tail=new Node("tail");
+        Geometry core=new Geometry("tail",new Cylinder(20,20,0.5f,2,true));
         float f[]={(float)Math.PI/2,0,0};
         Quaternion q=new Quaternion(f);
-        _tail.setLocalRotation(q);
+        core.setLocalRotation(q);
         _node = new Node(getName());
         _node.attachChild(head);
         _node.attachChild(_tail);
+        _tail.attachChild(core);
         Material mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
         mat.setBoolean("UseMaterialColors",true);
         mat.setColor("Ambient",new ColorRGBA(1,1,1,0.5f));
@@ -50,6 +61,11 @@ public class DummyAvatar extends Avatar implements ISceneComposition {
         _node.setMaterial(mat);
         view.getRootNode().attachChild(_node);
         _node.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+       
+        addOrientationMarker("A",mat,ColorRGBA.Red,0.5f,0); 
+        addOrientationMarker("B",mat,ColorRGBA.Blue,0,0.5f); 
+        addOrientationMarker("C",mat,ColorRGBA.Green,-0.5f,0); 
+        addOrientationMarker("D",mat,ColorRGBA.Yellow,0,-0.5f); 
     }
     @Override public synchronized void update(float tpf) {
         _node.setLocalTranslation(
@@ -71,6 +87,6 @@ public class DummyAvatar extends Avatar implements ISceneComposition {
         }
     }
     private Node _node;
-    private Geometry _tail;
+    private Node _tail;
     private boolean _split=false;
 }

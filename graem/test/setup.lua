@@ -1,5 +1,15 @@
 graem:setup({
-    a={
+    light={class="net.edvuvax.graem.DefaultLight"},
+    Playfield={ class="net.eduvax.graem.Playfield" },
+    Trajectory={
+        class="net.eduvax.graem.Trajectory",
+        bind={
+            time="time",
+            location="world.body.loc",
+        },
+        cob="net.eduvax.graem.BasisLLAtoJMErel"
+    },
+    ["Mobile Object"]={
         class="net.eduvax.graem.DummyAvatar",
         bind={
             time="time",
@@ -9,14 +19,4 @@ graem:setup({
         },
         cob="net.eduvax.graem.BasisLLAtoJMErel"
     },
-    b={ class="net.eduvax.graem.Playfield" },
-    traj={
-        class="net.eduvax.graem.Trajectory",
-        bind={
-            time="time",
-            location="world.body.loc",
-        },
-        cob="net.eduvax.graem.BasisLLAtoJMErel"
-    },
-    light={class="net.edvuvax.graem.DefaultLight"}
 })
