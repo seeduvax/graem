@@ -65,15 +65,12 @@ public class Main {
             tcpServer=new TCPServer(tcpPort,graem);
         }
 
-        Globals globals = JsePlatform.standardGlobals();
-        globals.set("graem",CoerceJavaToLua.coerce(graem));
+        LuaRunner lua=new LuaRunner(graem,System.in);
         for (String file: files) {
-            LuaValue l=globals.loadfile(file);
-            l.call();
+            lua.runFile(file);
         }
 
         app.start();
-        LuaRunner lua=new LuaRunner(graem,System.in);
         lua.setPrompt(System.out,"GraEm> ");
         lua.run();
         if (tcpServer!=null) {

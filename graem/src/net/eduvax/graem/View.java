@@ -21,6 +21,7 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
+import com.jme3.math.Vector3f;
 import java.util.Vector;
 
 /**
@@ -33,7 +34,7 @@ public class View extends SimpleApplication {
         setDisplayStatView(false);
         setPauseOnLostFocus(false);
         setSettings(_settings);
-        _settings.setTitle("Simphonie viewer");
+        _settings.setTitle("GraEm - data projectionist");
         _settings.setVSync(true);
         _settings.setResolution(1280,768);
     }
@@ -45,7 +46,7 @@ public class View extends SimpleApplication {
         _toAdd.add(comp);
     }
     @Override public void simpleInitApp() {
-        _hudText=new BitmapText(guiFont,false);
+        _hudText=new BitmapText(guiFont);
         _hudText.setColor(ColorRGBA.Yellow);
         _hudText.setSize(guiFont.getCharSet().getRenderedSize());
         _hudText.setLocalTranslation(10f,10f+_hudText.getLineHeight(),0);
@@ -66,12 +67,13 @@ public class View extends SimpleApplication {
                 if (pressed) prevCam();
             }
         },"prevCam");
+        flyCam.setMoveSpeed(100.0f);
     }
 
     public void nextCam() {
         if (rootNode.getChildren().size()>0) {
             _selAvatar++;
-            if (_selAvatar>=rootNode.getChildren().size()) {
+            if (_selAvatar>rootNode.getChildren().size()) {
                 _selAvatar=0;
             }
             setChase(_selAvatar);
@@ -82,7 +84,7 @@ public class View extends SimpleApplication {
         if (rootNode.getChildren().size()>0) {
             _selAvatar--;
             if (_selAvatar<0) {
-                _selAvatar=rootNode.getChildren().size()-1;
+                _selAvatar=rootNode.getChildren().size();
             }
             setChase(_selAvatar);
         }
@@ -90,6 +92,7 @@ public class View extends SimpleApplication {
 
     
     private ChaseCamera _chaseCam=null;
+
     public void setChase(Spatial s) {
         if (s!=null) {
             flyCam.setEnabled(false);
@@ -97,28 +100,36 @@ public class View extends SimpleApplication {
                 _chaseCam.setEnabled(false);
                 _chaseCam.cleanupWithInput(inputManager);
             }
+            cam.setFrustumPerspective(
+                    45f,       // fov
+                    (float)cam.getWidth()/cam.getHeight(), // aspect
+                    1.0f,      // near
+                    1000000f); // far
             _chaseCam=new ChaseCamera(cam,s,inputManager);
             _chaseCam.setMinVerticalRotation((float)-Math.PI);
             s.removeControl(ChaseCamera.class);
             s.addControl(_chaseCam);
             _hudText.setText("Chasing "+s.getName());
+            _chaseCam.setUpVector(Vector3f.UNIT_Y);
             _chaseCam.setEnabled(true);
         }
         else {
             _chaseCam.setEnabled(true);
             flyCam.setEnabled(true);
+            _hudText.setText("Fly cam");
         }
     }
     public void setChase(int i) {
         Spatial s=null;
         try {
             s=rootNode.getChildren().get(i);
-            setChase(s);
         }
         catch (IndexOutOfBoundsException ex) {
             // don't care out of bounds, 
-            // it's a kind of reset...
+            // it's a kind of reset towards
+            // the fly cam
         }
+        setChase(s);
     }
     public void setChase(String name) {
         setChase(rootNode.getChild(name));
@@ -142,6 +153,10 @@ public class View extends SimpleApplication {
         for (ISceneComposition c: _sceneElements) {
             c.update(tpf);
         }
+    }
+
+    protected BitmapText getHudText() {
+        return _hudText;
     }
     
     private Vector<ISceneComposition> _toAdd=new Vector<ISceneComposition>();

@@ -26,6 +26,8 @@ public class LuaRunner implements Runnable {
     public LuaRunner(Graem graem, InputStream in) {
         _graem=graem;
         _in=in;
+        _globals = JsePlatform.standardGlobals();
+        _globals.set("graem",CoerceJavaToLua.coerce(graem));
     }
 
     public void setPrompt(PrintStream out, String promptMsg) {
@@ -33,9 +35,12 @@ public class LuaRunner implements Runnable {
         _promptMsg=promptMsg;
     }
 
+    public void runFile(String filePath) {
+        LuaValue l=_globals.loadfile(filePath);
+        l.call();
+    }
+
     public void run() {
-        Globals globals = JsePlatform.standardGlobals();
-        globals.set("graem",CoerceJavaToLua.coerce(_graem));
         try {
             BufferedReader in=new BufferedReader(new InputStreamReader(_in));
             prompt();
@@ -45,7 +50,7 @@ public class LuaRunner implements Runnable {
                     line="graem:set("+line+")";
                 }
                 try {
-                    LuaValue statement=globals.load(line);
+                    LuaValue statement=_globals.load(line);
                     statement.call();
                 }
                 catch (Exception ex) {
@@ -68,8 +73,9 @@ ex.printStackTrace();
         }
     }
 
-    InputStream _in;
-    PrintStream _out=null;
-    String _promptMsg=null;
-    Graem _graem;
+    private InputStream _in;
+    private PrintStream _out=null;
+    private String _promptMsg=null;
+    private Graem _graem;
+    private Globals _globals;
 }

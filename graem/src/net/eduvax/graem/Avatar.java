@@ -17,7 +17,7 @@ import java.util.LinkedList;
  *
  */
 public abstract class Avatar implements IAvatar {
-    class AttrChange {
+    public class AttrChange {
         public String _name;
         public double[] _values;
         public AttrChange(String name, double[] values) {
@@ -39,7 +39,7 @@ public abstract class Avatar implements IAvatar {
 
     @Override public synchronized void setAttribute(String attrName,double[] values) {
         if ("location".equals(attrName)) {
-            if (values.length==3) {
+            if (values.length>=3) {
                 setLocation(values[0],values[1],values[2]);
             }
         }

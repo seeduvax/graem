@@ -24,7 +24,7 @@ public class Graem {
     public Object create(String name, String className) {
         try {
             Class c=Class.forName(className);
-            Object o=c.newInstance();
+            Object o=c.getConstructor().newInstance();
             if (o instanceof INamedObject) {
                 ((INamedObject)o).setName(name);
             }
@@ -57,7 +57,7 @@ public class Graem {
                 if (!cob.isnil()) {
                     try {
                         Class c=Class.forName(cob.toString());
-                        IChangeOfBasis b=(IChangeOfBasis)c.newInstance();
+                        IChangeOfBasis b=(IChangeOfBasis)c.getConstructor().newInstance();
                         ((IAvatar)o).setChangeOfBasis(b);
                     }
                     catch (Exception ex) {
