@@ -65,14 +65,15 @@ public class Main {
             tcpServer=new TCPServer(tcpPort,graem);
         }
 
-        LuaRunner lua=new LuaRunner(graem,System.in);
+        LuaShell lua=new LuaShell(graem);
         for (String file: files) {
             lua.runFile(file);
         }
 
         app.start();
-        lua.setPrompt(System.out,"GraEm> ");
+        lua.setPrompt("GraEm> ");
         lua.run();
+        app.stop();
         if (tcpServer!=null) {
             tcpServer.stop();
         }
