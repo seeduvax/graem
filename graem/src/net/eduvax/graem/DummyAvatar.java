@@ -63,8 +63,8 @@ public class DummyAvatar extends Avatar implements ISceneComposition {
         _node.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
        
         addOrientationMarker("A",mat,ColorRGBA.Red,0.5f,0); 
-        addOrientationMarker("B",mat,ColorRGBA.Blue,0,0.5f); 
-        addOrientationMarker("C",mat,ColorRGBA.Green,-0.5f,0); 
+        addOrientationMarker("B",mat,ColorRGBA.Green,0,0.5f); 
+        addOrientationMarker("C",mat,ColorRGBA.Blue,-0.5f,0); 
         addOrientationMarker("D",mat,ColorRGBA.Yellow,0,-0.5f); 
     }
     @Override public synchronized void update(float tpf) {

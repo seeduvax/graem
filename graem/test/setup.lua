@@ -1,6 +1,11 @@
 graem:setup({
     components={
-        light={class="net.edvuvax.graem.DefaultLight"},
+        light={
+            class="net.eduvax.graem.DefaultLight",
+            set={
+                shadowmapSize=4096
+            }
+        },
         Playfield={ class="net.eduvax.graem.Playfield" },
         Trajectory={
             class="net.eduvax.graem.Trajectory",

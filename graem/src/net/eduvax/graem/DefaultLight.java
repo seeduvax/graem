@@ -36,8 +36,7 @@ public class DefaultLight extends SceneComposition {
         sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
         parent.addLight(sun);
 
-        final int SHADOWMAP_SIZE=1024;
-        DirectionalLightShadowRenderer dlsr = new DirectionalLightShadowRenderer(assetManager, SHADOWMAP_SIZE, 3);
+        DirectionalLightShadowRenderer dlsr = new DirectionalLightShadowRenderer(assetManager, _shadowmapSize, 3);
         dlsr.setLight(sun);
         viewPort.addProcessor(dlsr);
 
@@ -45,7 +44,7 @@ public class DefaultLight extends SceneComposition {
         al.setColor(ColorRGBA.White.mult(0.4f));
         parent.addLight(al);
 
-        DirectionalLightShadowFilter dlsf = new DirectionalLightShadowFilter(assetManager, SHADOWMAP_SIZE, 3);
+        DirectionalLightShadowFilter dlsf = new DirectionalLightShadowFilter(assetManager, _shadowmapSize, 3);
         dlsf.setLight(sun);
         dlsf.setEnabled(true);
         FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
@@ -54,4 +53,10 @@ public class DefaultLight extends SceneComposition {
         viewPort.addProcessor(fpp);
 
     }
+
+    public void setShadowmapSize(int size) {
+        _shadowmapSize=size;
+    }
+
+    private int _shadowmapSize=1024;
 }

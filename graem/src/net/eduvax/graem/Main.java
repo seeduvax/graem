@@ -54,7 +54,6 @@ public class Main {
                 files.addElement(arg);
             }
         }
-        app.add(new DefaultLight());
         if (toon) {
             app.add(new ToonStyle());
         }
