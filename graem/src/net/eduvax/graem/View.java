@@ -114,7 +114,9 @@ public class View extends SimpleApplication {
             _chaseCam.setEnabled(true);
         }
         else {
-            _chaseCam.setEnabled(true);
+            if (_chaseCam!=null) {
+                _chaseCam.setEnabled(false);
+            }
             flyCam.setEnabled(true);
             _hudText.setText("Fly cam");
         }

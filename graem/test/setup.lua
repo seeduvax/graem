@@ -1,22 +1,32 @@
 graem:setup({
-    light={class="net.edvuvax.graem.DefaultLight"},
-    Playfield={ class="net.eduvax.graem.Playfield" },
-    Trajectory={
-        class="net.eduvax.graem.Trajectory",
-        bind={
-            time="time",
-            location="world.body.loc",
+    components={
+        light={class="net.edvuvax.graem.DefaultLight"},
+        Playfield={ class="net.eduvax.graem.Playfield" },
+        Trajectory={
+            class="net.eduvax.graem.Trajectory",
+            bind={
+                time="time",
+                location="world.body.loc",
+            },
+            set={
+                changeOfBasis={
+                    class="net.eduvax.graem.BasisLLAtoJMErel"
+                }
+            }
         },
-        cob="net.eduvax.graem.BasisLLAtoJMErel"
-    },
-    ["Mobile Object"]={
-        class="net.eduvax.graem.DummyAvatar",
-        bind={
-            time="time",
-            location="world.body.loc",
-            attitude="world.body.q",
-            split="split"
+        ["Mobile Object"]={
+            class="net.eduvax.graem.DummyAvatar",
+            bind={
+                time="time",
+                location="world.body.loc",
+                attitude="world.body.q",
+                split="split"
+            },
+            set={
+                changeOfBasis={
+                    class="net.eduvax.graem.BasisLLAtoJMErel"
+                }
+            }
         },
-        cob="net.eduvax.graem.BasisLLAtoJMErel"
     },
 })
