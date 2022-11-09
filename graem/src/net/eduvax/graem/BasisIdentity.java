@@ -19,7 +19,7 @@ public class BasisIdentity implements IChangeOfBasis {
     @Override public Vector3f v(double t,double x, double y, double z) {
         return new Vector3f((float)x,(float)y,(float)z);
     }
-    @Override public Quaternion q(double t,double w,double x, double y, double z) {
+    @Override public Quaternion q(double t,double x, double y, double z, double w) {
         return new Quaternion((float)x,(float)y,(float)z,(float)w);
     }
 }

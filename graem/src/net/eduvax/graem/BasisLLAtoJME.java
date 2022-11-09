@@ -19,7 +19,7 @@ public class BasisLLAtoJME implements IChangeOfBasis {
     @Override public Vector3f v(double t,double x, double y, double z) {
         return new Vector3f((float)-y,(float)z,(float)-x);
     }
-    @Override public Quaternion q(double t,double w,double x, double y, double z) {
+    @Override public Quaternion q(double t,double x, double y, double z, double w) {
         return new Quaternion((float)-y,(float)z,(float)-x,(float)w);
     }
 }
