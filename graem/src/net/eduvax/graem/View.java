@@ -22,6 +22,9 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import com.jme3.math.Vector3f;
+import com.jme3.bounding.BoundingBox;
+import com.jme3.bounding.BoundingSphere;
+import com.jme3.bounding.BoundingVolume;
 import java.util.Vector;
 
 /**
@@ -107,6 +110,19 @@ public class View extends SimpleApplication {
                     10000000f); // far
             _chaseCam=new ChaseCamera(cam,s,inputManager);
             _chaseCam.setMinVerticalRotation((float)-Math.PI);
+            float size=10f;
+            BoundingVolume bound =s.getWorldBound();
+            if(bound instanceof BoundingSphere){
+                size = ((BoundingSphere)bound).getRadius();
+            }
+            if(bound instanceof BoundingBox){
+                size = Math.max(Math.max(((BoundingBox)bound).getXExtent(),((BoundingBox)bound).getYExtent()),((BoundingBox)bound).getZExtent());
+            }
+            size = Math.min(size,100000f);
+            _chaseCam.setMaxDistance(size*5f);
+            _chaseCam.setDefaultDistance(size);
+            _chaseCam.setZoomSensitivity(size/5f);
+
             s.removeControl(ChaseCamera.class);
             s.addControl(_chaseCam);
             _hudText.setText("Chasing "+s.getName());
