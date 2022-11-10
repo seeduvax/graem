@@ -104,7 +104,7 @@ public class View extends SimpleApplication {
                     45f,       // fov
                     (float)cam.getWidth()/cam.getHeight(), // aspect
                     1.0f,      // near
-                    1000000f); // far
+                    10000000f); // far
             _chaseCam=new ChaseCamera(cam,s,inputManager);
             _chaseCam.setMinVerticalRotation((float)-Math.PI);
             s.removeControl(ChaseCamera.class);
