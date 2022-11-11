@@ -20,6 +20,7 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 import org.jline.reader.Candidate;
 import org.jline.reader.Completer;
 import org.jline.reader.impl.completer.StringsCompleter;
+import org.jline.reader.impl.history.DefaultHistory;
 import org.jline.reader.LineReader;
 import org.jline.reader.ParsedLine;
 import org.jline.reader.EndOfFileException;
@@ -31,15 +32,20 @@ import org.jline.terminal.TerminalBuilder;
 /**
  *
  */
-public class LuaShell implements Runnable {
-    public LuaShell(Graem graem) {
+public class LuaShell implements Runnable, IGraemHandler {
+    public LuaShell() {
+    }
+
+    @Override public void setGraem(Graem graem) {
         _graem=graem;
-        _globals = JsePlatform.standardGlobals();
-        _globals.set("graem",CoerceJavaToLua.coerce(graem));
     }
 
     public void setPrompt(String promptMsg) {
         _promptMsg=promptMsg;
+    }
+
+    public void setHistoryFile(String filePath) {
+        _historyFile=filePath;
     }
 
     public void runFile(String filePath) {
@@ -48,6 +54,10 @@ public class LuaShell implements Runnable {
     }
 
     public void run() {
+        _globals = JsePlatform.standardGlobals();
+        if (_graem!=null) {
+            _globals.set("graem",CoerceJavaToLua.coerce(_graem));
+        }
         try {
             Terminal terminal=TerminalBuilder.builder()
                                     .system(true)
@@ -55,6 +65,8 @@ public class LuaShell implements Runnable {
             LineReader reader=LineReaderBuilder.builder()
                                     .terminal(terminal)
                                     .completer(new LuaCompleter())
+                                    .variable(LineReader.HISTORY_FILE, _historyFile)
+                                    .history(new DefaultHistory())
                                     .build();
             boolean running=true;
             while(running) {
@@ -137,4 +149,5 @@ ex.printStackTrace();
     private String _promptMsg="> ";
     private Graem _graem;
     private Globals _globals;
+    private String _historyFile;
 }
