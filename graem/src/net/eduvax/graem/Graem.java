@@ -83,7 +83,7 @@ public class Graem {
             }
             else if (value.isstring()) {
                 Method m=o.getClass().getMethod(setName,new Class[]{String.class});
-                m.invoke(o,value.tostring());
+                m.invoke(o,value.toString());
                 res=true;
             }
             else {
