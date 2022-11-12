@@ -37,6 +37,24 @@ public class Graem {
         return o;
     }
 
+    private Method findMatchingMethod(Object o,String name, Object param) {
+        for (Method m: o.getClass().getMethods()) {
+            if (m.getName().equals(name)) {
+                Class[] pc=m.getParameterTypes();
+                if (pc.length==1) {
+                    try {
+                        pc[0].cast(param);
+                        return m;
+                    }
+                    catch (ClassCastException ex) {
+                        // type not matching, just keep searching.
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     private boolean setObjectAttribute(Object o, String name, LuaValue value) {
         boolean res=false;
         String setName="set"+name.substring(0,1).toUpperCase()+name.substring(1);
@@ -44,9 +62,11 @@ public class Graem {
             if (value.istable() && !value.get("class").isnil()) {
                 Object a=create(value);
                 if (a!=null) {
-                    Method m=o.getClass().getMethod(setName,new Class[]{a.getClass()});
-                    m.invoke(o,a);
-                    res=true;
+                    Method m=findMatchingMethod(o,setName,a);
+                    if (m!=null) {
+                        m.invoke(o,a);
+                        res=true;
+                    }
                 }
             }
             else if (value.isint()) {
