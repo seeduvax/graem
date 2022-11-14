@@ -60,11 +60,18 @@ public class Main {
         Graem graem=new Graem(app);
 
         TCPServer tcpServer=null;
+        Thread tcpTh=null;
         if (tcpPort>0) {
-            tcpServer=new TCPServer(tcpPort,graem);
+            tcpServer=new TCPServer();
+            tcpServer.setPort(tcpPort);
+            tcpServer.setGraem(graem);
+            tcpTh=new Thread(tcpServer);
+            tcpTh.start();
         }
 
-        LuaShell lua=new LuaShell(graem);
+        LuaShell lua=new LuaShell();
+        lua.setGraem(graem);
+        lua.setHistoryFile(System.getProperty("user.home")+"/.graem/history");
         for (String file: files) {
             lua.runFile(file);
         }
@@ -75,6 +82,17 @@ public class Main {
         app.stop();
         if (tcpServer!=null) {
             tcpServer.stop();
+            try {
+                if (tcpTh!=null) {
+                    tcpTh.join();
+                }
+            }
+            catch (InterruptedException ex) {
+                // Dont't really car why the join is interrupted since it
+                // is done only to nicely cleanup thing just before java
+                // VM exit that should anyway close everything.
+            }
         }
+        graem.shutdown();
     }
 }

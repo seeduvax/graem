@@ -16,26 +16,29 @@ import java.net.Socket;
 /**
  *
  */
-public class TCPServer implements Runnable {
-    public TCPServer(int port, Graem graem) {
-        _graem=graem;
-        try {
-            _server=new ServerSocket(port);
-            start();
-        }
-        catch (IOException ex) {
-            System.err.println("Can't start server on port "+port+": "+ex);
-        }
+public class TCPServer implements Runnable, IGraemHandler, IStoppable {
+    
+    public TCPServer() {
+        _graem=null;
+        _server=null;
     }
 
-    public void start() {
-        if (_th==null) {
-            _th=new Thread(this);
-            _th.start();
-        }
+    @Override public void setGraem(Graem g) {
+        _graem=g;
+    }
+
+    public void setPort(int port) {
+        _port=port;
     }
 
     @Override public void run() {
+        try {
+            _server=new ServerSocket(_port);
+        }
+        catch (IOException ex) {
+            System.err.println("Can't start server on port "+_port+": "+ex);
+            return;
+        }
         _run=true;
         while(_run) {
             try {
@@ -51,20 +54,20 @@ public class TCPServer implements Runnable {
         }
     }
 
-    public void stop() {
+    @Override public void stop() {
         _run=false;
-        if (_th!=null) {
+        if (_server!=null) {
             try {
-                _th.join();
+                _server.close();
             }
-            catch (InterruptedException ex) {
-                // interrupt in join ignored.
+            catch (IOException ex) {
+                // Don't really care server can't be stopped.
             }
-            _th=null;
         }
     }
 
     private Thread _th=null;
+    int _port=10000;
     private boolean _run=false;
     ServerSocket _server;
     Graem _graem;

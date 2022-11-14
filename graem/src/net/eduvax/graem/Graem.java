@@ -10,6 +10,7 @@
 package net.eduvax.graem;
 
 import java.util.Hashtable;
+import java.util.Vector;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import java.lang.reflect.Method;
@@ -36,6 +37,24 @@ public class Graem {
         return o;
     }
 
+    private Method findMatchingMethod(Object o,String name, Object param) {
+        for (Method m: o.getClass().getMethods()) {
+            if (m.getName().equals(name)) {
+                Class[] pc=m.getParameterTypes();
+                if (pc.length==1) {
+                    try {
+                        pc[0].cast(param);
+                        return m;
+                    }
+                    catch (ClassCastException ex) {
+                        // type not matching, just keep searching.
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     private boolean setObjectAttribute(Object o, String name, LuaValue value) {
         boolean res=false;
         String setName="set"+name.substring(0,1).toUpperCase()+name.substring(1);
@@ -43,9 +62,11 @@ public class Graem {
             if (value.istable() && !value.get("class").isnil()) {
                 Object a=create(value);
                 if (a!=null) {
-                    Method m=o.getClass().getMethod(setName,new Class[]{a.getClass()});
-                    m.invoke(o,a);
-                    res=true;
+                    Method m=findMatchingMethod(o,setName,a);
+                    if (m!=null) {
+                        m.invoke(o,a);
+                        res=true;
+                    }
                 }
             }
             else if (value.isint()) {
@@ -82,7 +103,7 @@ public class Graem {
             }
             else if (value.isstring()) {
                 Method m=o.getClass().getMethod(setName,new Class[]{String.class});
-                m.invoke(o,value.tostring());
+                m.invoke(o,value.toString());
                 res=true;
             }
             else {
@@ -110,11 +131,15 @@ ex.printStackTrace();
         return res;
     }
 
+
     private Object create(String name, String className) {
         try {
             Object o=create(className);
             if (name!=null && o instanceof INamedObject) {
                 ((INamedObject)o).setName(name);
+            }
+            if (o instanceof IGraemHandler) {
+                ((IGraemHandler)o).setGraem(this);
             }
             if (o instanceof ISceneComposition) {
                 _view.add((ISceneComposition)o);
@@ -142,6 +167,26 @@ ex.printStackTrace();
         return o;
     }
 
+    private class StopHandler {
+        private IStoppable _toStop;
+        private Thread _th;
+        public StopHandler(IStoppable toStop, Thread th) {
+        }
+        public void stop() {
+            if (_toStop!=null) {
+                _toStop.stop();
+                if (_th!=null) {
+                    try {
+                        _th.join();
+                    }
+                    catch (InterruptedException ex) {
+                        // don't care wht join is interrupted, just go on.
+                    }
+                }
+            }
+        }
+    }
+
     private Object create(String name,LuaValue spec) {
         Object o=create(name,spec.get("class").toString(),spec.get("set"));
         if (o!=null && o instanceof IAvatar) {
@@ -150,6 +195,13 @@ ex.printStackTrace();
                 bindIt.next();
                 bind(bindIt.value().toString(),(IAvatar)o,bindIt.key().toString());
             }
+        }
+        if (o instanceof Runnable) {
+            Thread th=new Thread((Runnable)o);
+            if (o instanceof IStoppable) {
+                _toStop.add(new StopHandler((IStoppable)o,th));
+            }
+            th.start();
         }
         return o;
     }
@@ -191,7 +243,14 @@ ex.printStackTrace();
         }
     }
 
+    public void shutdown() {
+        for (StopHandler h: _toStop) {
+            h.stop();
+        }
+    }
+
     private BindMap _bindMap=new BindMap();
     private View _view;
     private Hashtable<String,IAvatar> _avatars=new Hashtable<String,IAvatar>();
+    private Vector<StopHandler> _toStop=new Vector<StopHandler>();
 }
