@@ -9,6 +9,7 @@
  */
 package net.eduvax.graem;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 import org.luaj.vm2.Globals;
@@ -122,26 +123,46 @@ ex.printStackTrace();
                 w=w.substring(dot+1);
             }
             if (!g.isnil()) {
-                LuaValueIterator it=new LuaValueIterator(g);
-                while (it.hasNext()) {
-                    it.next();
-                    String k=it.key().toString();
-                    if (k.startsWith(w)) {
-                        String candidate=prefix+k;
-                        if (it.value().isfunction()) {
-                            candidate=candidate+"(";
+                if (g.isuserdata()) {
+                    Method[] methods=g.touserdata().getClass().getMethods();
+                    for (Method m: methods) {
+                        String mName=m.getName();
+                        if (mName.startsWith(w)) {
+                            String candidate=prefix+mName+"(";
+                            candidates.add(new Candidate(
+                                    candidate,
+                                    candidate,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    false
+                                ));
                         }
-                        candidates.add(new Candidate(
-                                candidate,
-                                candidate,
-                                null,
-                                null,
-                                null,
-                                null,
-                                false
-                            ));
                     }
-                } 
+                }
+                else if (g.istable()) {
+                    LuaValueIterator it=new LuaValueIterator(g);
+                    while (it.hasNext()) {
+                        it.next();
+                        String k=it.key().toString();
+                        if (k.startsWith(w)) {
+                            String candidate=prefix+k;
+                            if (it.value().isfunction()) {
+                                candidate=candidate+"(";
+                            }
+                            candidates.add(new Candidate(
+                                    candidate,
+                                    candidate,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    false
+                                ));
+                        }
+                    } 
+                }
             }
         }
     }
