@@ -8,24 +8,20 @@
  * $Date$
  */
 package net.eduvax.graem;
+
+import java.util.Vector;
+
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.AssetManager;
 import com.jme3.font.BitmapText;
-import com.jme3.input.ChaseCamera;
-import com.jme3.input.KeyInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.Renderer;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
-import com.jme3.math.Vector3f;
-import com.jme3.bounding.BoundingBox;
-import com.jme3.bounding.BoundingSphere;
-import com.jme3.bounding.BoundingVolume;
-import java.util.Vector;
+import com.jme3.input.InputManager;
+import com.jme3.input.FlyByCamera;
 
 /**
  *
@@ -56,105 +52,23 @@ public class View extends SimpleApplication {
         _hudText.setText("Hello Graem");
         guiNode.attachChild(_hudText); 
 
-        inputManager.addMapping("nextCam",new KeyTrigger(KeyInput.KEY_PGUP));
-        inputManager.addListener(new ActionListener() {
-            @Override 
-            public void onAction(String name, boolean pressed, float tpf) {
-                if (pressed) nextCam();
-            }
-        },"nextCam");
-        inputManager.addMapping("prevCam",new KeyTrigger(KeyInput.KEY_PGDN));
-        inputManager.addListener(new ActionListener() {
-            @Override 
-            public void onAction(String name, boolean pressed, float tpf) {
-                if (pressed) prevCam();
-            }
-        },"prevCam");
-        flyCam.setMoveSpeed(100.0f);
+xxx=new AutoChaseCam();
+xxx.build(this);
     }
+private AutoChaseCam xxx;
 
-    public void nextCam() {
-        if (rootNode.getChildren().size()>0) {
-            _selAvatar++;
-            if (_selAvatar>rootNode.getChildren().size()) {
-                _selAvatar=0;
-            }
-            setChase(_selAvatar);
-        }
-    }
-
-    public void prevCam() {
-        if (rootNode.getChildren().size()>0) {
-            _selAvatar--;
-            if (_selAvatar<0) {
-                _selAvatar=rootNode.getChildren().size();
-            }
-            setChase(_selAvatar);
-        }
-    }
-
-    
-    private ChaseCamera _chaseCam=null;
-
-    public void setChase(Spatial s) {
-        if (s!=null) {
-            flyCam.setEnabled(false);
-            if (_chaseCam!=null) {
-                _chaseCam.setEnabled(false);
-                _chaseCam.cleanupWithInput(inputManager);
-            }
-            cam.setFrustumPerspective(
-                    45f,       // fov
-                    (float)cam.getWidth()/cam.getHeight(), // aspect
-                    1.0f,      // near
-                    10000000f); // far
-            _chaseCam=new ChaseCamera(cam,s,inputManager);
-            _chaseCam.setMinVerticalRotation((float)-Math.PI);
-            float size=10f;
-            BoundingVolume bound =s.getWorldBound();
-            if(bound instanceof BoundingSphere){
-                size = ((BoundingSphere)bound).getRadius();
-            }
-            if(bound instanceof BoundingBox){
-                size = Math.max(Math.max(((BoundingBox)bound).getXExtent(),((BoundingBox)bound).getYExtent()),((BoundingBox)bound).getZExtent());
-            }
-            size = Math.min(size,100000f);
-            _chaseCam.setMaxDistance(size*5f);
-            _chaseCam.setDefaultDistance(size);
-            _chaseCam.setZoomSensitivity(size/5f);
-
-            s.removeControl(ChaseCamera.class);
-            s.addControl(_chaseCam);
-            _hudText.setText("Chasing "+s.getName());
-            _chaseCam.setUpVector(Vector3f.UNIT_Y);
-            _chaseCam.setEnabled(true);
-        }
-        else {
-            if (_chaseCam!=null) {
-                _chaseCam.setEnabled(false);
-            }
-            flyCam.setEnabled(true);
-            _hudText.setText("Fly cam");
-        }
-    }
-    public void setChase(int i) {
-        Spatial s=null;
-        try {
-            s=rootNode.getChildren().get(i);
-        }
-        catch (IndexOutOfBoundsException ex) {
-            // don't care out of bounds, 
-            // it's a kind of reset towards
-            // the fly cam
-        }
-        setChase(s);
-    }
-    public void setChase(String name) {
-        setChase(rootNode.getChild(name));
-    }
 
     public Node getRootNode() {
         return rootNode;
+    }
+    public InputManager getInputManager() {
+        return inputManager;
+    }
+    public FlyByCamera getFlyCam() {
+        return flyCam;
+    }
+    public Camera getCamera() {
+        return cam;
     }
     @Override public void simpleUpdate(float tpf) {
         synchronized(this) {
@@ -164,8 +78,6 @@ public class View extends SimpleApplication {
                     _sceneElements.add(comp);
                 }
                 _toAdd.clear();
-                _selAvatar=rootNode.getChildren().size()-1;
-                setChase(_selAvatar);
             }
         }
         for (ISceneComposition c: _sceneElements) {
@@ -181,6 +93,5 @@ public class View extends SimpleApplication {
     private Vector<ISceneComposition> _sceneElements=
                                            new Vector<ISceneComposition>();
     private AppSettings _settings=new AppSettings(true);
-    private int _selAvatar=0;
     private BitmapText _hudText;
 }

@@ -33,5 +33,8 @@ graem:setup({
                 }
             }
         },
+--        cam={
+--            class="net.eduvax.graem.AutoChaseCam",
+--        }
     },
 })
