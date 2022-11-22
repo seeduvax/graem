@@ -10,6 +10,7 @@
 package net.eduvax.graem;
 
 import java.util.Vector;
+import java.util.Hashtable;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.AssetManager;
@@ -22,6 +23,9 @@ import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
 import com.jme3.input.InputManager;
 import com.jme3.input.FlyByCamera;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
 
 /**
  *
@@ -51,24 +55,45 @@ public class View extends SimpleApplication {
         _hudText.setLocalTranslation(10f,10f+_hudText.getLineHeight(),0);
         _hudText.setText("Hello Graem");
         guiNode.attachChild(_hudText); 
-
-xxx=new AutoChaseCam();
-xxx.build(this);
+        inputManager.addMapping("nextCam",new KeyTrigger(KeyInput.KEY_PGUP));
+        inputManager.addListener(new ActionListener() {
+            @Override 
+            public void onAction(String name, boolean pressed, float tpf) {
+System.out.println("nextCam");
+                if (pressed) handleEvent("nextCam");
+            }
+        },"nextCam");
+        inputManager.addMapping("prevCam",new KeyTrigger(KeyInput.KEY_PGDN));
+        inputManager.addListener(new ActionListener() {
+            @Override 
+            public void onAction(String name, boolean pressed, float tpf) {
+System.out.println("prevCam");
+                if (pressed) handleEvent("prevCam");
+            }
+        },"prevCam");
     }
-private AutoChaseCam xxx;
 
+
+    public void registerEventHandler(String evName,Runnable handler) {
+        Vector<Runnable> vh=_eventHandlers.get(evName);
+        if (vh==null) {
+            vh=new Vector<Runnable>();
+            _eventHandlers.put(evName,vh);
+        }
+        vh.add(handler);
+    }
 
     public Node getRootNode() {
         return rootNode;
-    }
-    public InputManager getInputManager() {
-        return inputManager;
     }
     public FlyByCamera getFlyCam() {
         return flyCam;
     }
     public Camera getCamera() {
         return cam;
+    }
+    public InputManager getInputManager() {
+        return inputManager;
     }
     @Override public void simpleUpdate(float tpf) {
         synchronized(this) {
@@ -94,4 +119,14 @@ private AutoChaseCam xxx;
                                            new Vector<ISceneComposition>();
     private AppSettings _settings=new AppSettings(true);
     private BitmapText _hudText;
+    private Hashtable<String,Vector<Runnable>> _eventHandlers=new Hashtable<String,Vector<Runnable>>();
+    private void handleEvent(String name) {
+        Vector<Runnable> toRun=_eventHandlers.get(name);
+        if (toRun!=null) {
+            for (Runnable r: toRun) {
+                r.run();
+            }
+        }
+    }
+    
 }

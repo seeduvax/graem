@@ -35,10 +35,12 @@ import org.jline.terminal.TerminalBuilder;
  */
 public class LuaShell implements Runnable, IGraemHandler {
     public LuaShell() {
+        _globals = JsePlatform.standardGlobals();
     }
 
     @Override public void setGraem(Graem graem) {
         _graem=graem;
+        _globals.set("graem",CoerceJavaToLua.coerce(_graem));
     }
 
     public void setPrompt(String promptMsg) {
@@ -55,10 +57,6 @@ public class LuaShell implements Runnable, IGraemHandler {
     }
 
     public void run() {
-        _globals = JsePlatform.standardGlobals();
-        if (_graem!=null) {
-            _globals.set("graem",CoerceJavaToLua.coerce(_graem));
-        }
         try {
             Terminal terminal=TerminalBuilder.builder()
                                     .system(true)

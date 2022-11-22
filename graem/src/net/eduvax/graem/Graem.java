@@ -253,4 +253,10 @@ ex.printStackTrace();
     private View _view;
     private Hashtable<String,IAvatar> _avatars=new Hashtable<String,IAvatar>();
     private Vector<StopHandler> _toStop=new Vector<StopHandler>();
+
+    public static void TRACE(String msg) {
+        StackTraceElement st=(new Throwable()).getStackTrace()[1];
+        System.out.println("TRACE["+st.getClassName()+"."+st.getMethodName()
+            +"():"+st.getLineNumber()+"]: "+msg);
+    }
 }

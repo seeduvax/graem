@@ -21,7 +21,6 @@ import com.jme3.scene.debug.Grid;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.texture.Texture;
-import com.jme3.util.SkyFactory;
 import com.jme3.material.RenderState;
 import com.jme3.renderer.queue.RenderQueue;
 /**
@@ -101,9 +100,5 @@ public class Playfield extends SceneComposition {
             playfield.attachChild(plate);
             addGrid("Grid"+i,playfield,101,101,10f,new Vector3f(-500, 1000.0f*i, -500),ColorRGBA.Black,2);
         }
-
-        playfield.attachChild(SkyFactory.createSky(_assetManager,
-                          "res/textures/sky/skysphere1.jpg", 
-                           SkyFactory.EnvMapType.EquirectMap));
     }
 }

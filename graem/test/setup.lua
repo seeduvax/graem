@@ -1,6 +1,9 @@
 graem:setup({
     components={
-        light={
+        Sky={
+            class="net.eduvax.graem.SkyBox",
+        },
+        Light={
             class="net.eduvax.graem.DefaultLight",
             set={
                 shadowmapSize=4096
@@ -33,8 +36,8 @@ graem:setup({
                 }
             }
         },
---        cam={
---            class="net.eduvax.graem.AutoChaseCam",
---        }
+        cam={
+            class="net.eduvax.graem.AutoChaseCam",
+        }
     },
 })
