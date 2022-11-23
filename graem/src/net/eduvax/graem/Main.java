@@ -9,90 +9,14 @@
  */
 package net.eduvax.graem;
 
-import com.jme3.system.AppSettings;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import org.luaj.vm2.Globals;
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
-import org.luaj.vm2.lib.jse.JsePlatform;
 
 /**
  *
  */
 public class Main {
     public static void main(String[] args) {
-        View app = new View();
-        Vector<String> files=new Vector<String>();
-        AppSettings settings = app.getSettings();
-        boolean toon=false;
-        int tcpPort=0;
-        for(String arg: args) {
-            if ("-f".equals(arg)) {
-                Toolkit tk=Toolkit.getDefaultToolkit();
-                Dimension d=tk.getScreenSize();
-                settings.setResolution(d.width,d.height);
-                settings.setFullscreen(true);
-            }
-            else if ("-ts".equals(arg)) {
-                toon=true;
-            }
-            else if (arg.startsWith("-tcp")) {
-                tcpPort=10001;
-                StringTokenizer st=new StringTokenizer(arg,"=");
-                st.nextToken();
-                if (st.hasMoreTokens()) {
-                    tcpPort=Integer.parseInt(st.nextToken());
-                }
-            }
-            else {
-                files.addElement(arg);
-            }
-        }
-        if (toon) {
-            app.add(new ToonStyle());
-        }
-        Graem graem=new Graem(app);
-
-        TCPServer tcpServer=null;
-        Thread tcpTh=null;
-        if (tcpPort>0) {
-            tcpServer=new TCPServer();
-            tcpServer.setPort(tcpPort);
-            tcpServer.setGraem(graem);
-            tcpTh=new Thread(tcpServer);
-            tcpTh.start();
-        }
-
-        LuaShell lua=new LuaShell();
-        lua.setGraem(graem);
-        lua.setHistoryFile(System.getProperty("user.home")+"/.graem/history");
-        for (String file: files) {
-            lua.runFile(file);
-        }
-
-        app.start();
-        lua.setPrompt("GraEm> ");
-        lua.run();
-        app.stop();
-        if (tcpServer!=null) {
-            tcpServer.stop();
-            try {
-                if (tcpTh!=null) {
-                    tcpTh.join();
-                }
-            }
-            catch (InterruptedException ex) {
-                // Dont't really car why the join is interrupted since it
-                // is done only to nicely cleanup thing just before java
-                // VM exit that should anyway close everything.
-            }
-        }
-        graem.shutdown();
+        GraemApp app=new GraemApp();
+        app.init(args);
+        app.run();
     }
 }
