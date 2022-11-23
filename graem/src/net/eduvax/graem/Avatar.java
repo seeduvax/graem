@@ -68,7 +68,7 @@ public abstract class Avatar implements IAvatar {
     }
   
      
-    protected synchronized Vector3f getLocation() {
+    protected synchronized double[] getLocation() {
         return _location;
     } 
     protected synchronized Quaternion getAttitude() {
@@ -90,7 +90,7 @@ public abstract class Avatar implements IAvatar {
     
     private String _name;
     private double _time;
-    private Vector3f _location=new Vector3f();
+    private double[] _location=new double[3];
     private Quaternion _attitude=new Quaternion();
     private LinkedList<AttrChange> _attrChangesQueue=new LinkedList<AttrChange>();
     private IChangeOfBasis _cb=new BasisIdentity();

@@ -16,6 +16,6 @@ import com.jme3.math.Vector3f;
  *
  */
 public interface IChangeOfBasis {
-    Vector3f v(double t,double x, double y, double z);
+    double[] v(double t,double x, double y, double z);
     Quaternion q(double t, double x, double y, double z, double w);
 }

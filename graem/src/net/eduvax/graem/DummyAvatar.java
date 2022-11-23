@@ -68,8 +68,10 @@ public class DummyAvatar extends Avatar implements ISceneComposition {
         addOrientationMarker("D",mat,ColorRGBA.Yellow,0,-0.5f); 
     }
     @Override public synchronized void update(float tpf) {
+        double[] l=getLocation();
+        Vector3f lv=new Vector3f((float)l[0],(float)l[1],(float)l[2]);
         _node.setLocalTranslation(
-                _node.getLocalTranslation().interpolateLocal(getLocation(),0.2f));
+                _node.getLocalTranslation().interpolateLocal(lv,0.2f));
         Quaternion q=_node.getLocalRotation();
         q.nlerp(getAttitude(),0.2f);
         _node.setLocalRotation(q);
@@ -82,8 +84,8 @@ public class DummyAvatar extends Avatar implements ISceneComposition {
             ac=pollAttrChange();
         }
         if (_split) {
-            Vector3f l=_tail.getLocalTranslation();
-            l.setY(l.getY()-0.1f);
+            Vector3f tl=_tail.getLocalTranslation();
+            tl.setY(tl.getY()-0.1f);
         }
     }
     private Node _node;

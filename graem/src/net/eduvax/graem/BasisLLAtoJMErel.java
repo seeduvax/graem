@@ -14,7 +14,7 @@ import com.jme3.math.Vector3f;
  *
  */
 public class BasisLLAtoJMErel extends BasisLLAtoJME {
-    @Override public Vector3f v(double t, double x, double y, double z) {
+    @Override public double[] v(double t, double x, double y, double z) {
         if (_origin==null) {
             _origin=new double[]{x,y,z};
         }

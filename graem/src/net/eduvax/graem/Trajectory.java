@@ -54,12 +54,12 @@ public class Trajectory extends Avatar implements ISceneComposition {
         }
         if (newPoint) {
             if (_segStart==null) {
-                Vector3f loc=getLocation();
-                _segStart=new float[]{loc.getX(),loc.getY(),loc.getZ()};
+                double[] loc=getLocation();
+                _segStart=new float[]{(float)loc[0],(float)loc[1],(float)loc[2]};
             }
             else {
                 _count++;
-                Vector3f loc=getLocation();
+                double[] loc=getLocation();
                 Mesh mesh=new Mesh();
                 mesh.setMode(Mesh.Mode.Lines);
                 Geometry segment = new Geometry("Segment"+_count, mesh);
@@ -68,17 +68,17 @@ public class Trajectory extends Avatar implements ISceneComposition {
                             _segStart[0],
                             _segStart[1],
                             _segStart[2],
-                            loc.getX(),
-                            loc.getY(),
-                            loc.getZ()
+                            (float)loc[0],
+                            (float)loc[1],
+                            (float)loc[2]
                         });
                 mesh.setBuffer(VertexBuffer.Type.Index, 2, new short[]{ 0, 1 });
                 mesh.updateBound();
                 mesh.updateCounts();
                 _node.attachChild(segment);
-                _segStart[0]=loc.getX();
-                _segStart[1]=loc.getY();
-                _segStart[2]=loc.getZ();
+                _segStart[0]=(float)loc[0];
+                _segStart[1]=(float)loc[1];
+                _segStart[2]=(float)loc[2];
             }
         }
     }
