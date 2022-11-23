@@ -59,7 +59,6 @@ public class View extends SimpleApplication {
         inputManager.addListener(new ActionListener() {
             @Override 
             public void onAction(String name, boolean pressed, float tpf) {
-System.out.println("nextCam");
                 if (pressed) handleEvent("nextCam");
             }
         },"nextCam");
@@ -67,7 +66,6 @@ System.out.println("nextCam");
         inputManager.addListener(new ActionListener() {
             @Override 
             public void onAction(String name, boolean pressed, float tpf) {
-System.out.println("prevCam");
                 if (pressed) handleEvent("prevCam");
             }
         },"prevCam");
