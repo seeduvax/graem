@@ -24,10 +24,33 @@ public class Graem {
         _view=v;
     }
 
+
+    private Class<?> loadClass(String name) {
+        Class<?> c=null;
+        try {
+           c=Class.forName(name);
+        }
+        catch (ClassNotFoundException ex) {
+            // just let metho return null;
+        }
+        return c;
+    }
+    private Class<?> findClass(String name) {
+        Class<?> c=loadClass(name);
+        if (c==null) {
+            for (String p: _imports) {
+                c=loadClass(p+"."+name);
+                if (c!=null) {
+                    return c;
+                }
+            }
+        }
+        return c;
+    }
     private Object create(String className) {
         Object o=null;
         try {
-            Class<?> c=Class.forName(className);
+            Class<?> c=findClass(className);
             Class<?>[] ctrArgs= new Class[]{};
             o=c.getConstructor(ctrArgs).newInstance();
         }
@@ -161,7 +184,18 @@ ex.printStackTrace();
             LuaValueIterator it=new LuaValueIterator(cfg);
             while (it.hasNext()) {
                 it.next();
-                setObjectAttribute(o,it.key().toString(),it.value());
+                // ignore class attribute since it is already processed
+                // when entering this method.
+                if (!"class".equals(it.key().toString())) {
+                    if (o instanceof IAvatar && "bind".equals(it.key().toString())) {
+                        LuaValueIterator bindIt=new LuaValueIterator(it.value());
+                        while (bindIt.hasNext()) {
+                            bindIt.next();
+                            bind(bindIt.value().toString(),(IAvatar)o,bindIt.key().toString());
+                        }
+                    }
+                    setObjectAttribute(o,it.key().toString(),it.value());
+                }
             }
         }
         return o;
@@ -188,14 +222,7 @@ ex.printStackTrace();
     }
 
     private Object create(String name,LuaValue spec) {
-        Object o=create(name,spec.get("class").toString(),spec.get("set"));
-        if (o!=null && o instanceof IAvatar) {
-            LuaValueIterator bindIt=new LuaValueIterator(spec.get("bind"));
-            while (bindIt.hasNext()) {
-                bindIt.next();
-                bind(bindIt.value().toString(),(IAvatar)o,bindIt.key().toString());
-            }
-        }
+        Object o=create(name,spec.get("class").toString(),spec);
         if (o instanceof Runnable) {
             Thread th=new Thread((Runnable)o);
             if (o instanceof IStoppable) {
@@ -218,11 +245,26 @@ ex.printStackTrace();
         }
     }
 
-    public void setup(LuaValue cfgTable) {
-        LuaValueIterator it=new LuaValueIterator(cfgTable);
+    public void setImport(LuaValue cpTable) {
+        LuaValueIterator it=new LuaValueIterator(cpTable);
         while (it.hasNext()) {
             it.next();
-            setObjectAttribute(this,it.key().toString(),it.value());
+            _imports.add(it.value().toString());
+        }
+    }
+
+    public void setup(LuaValue cfgTable) {
+        LuaValueIterator it=new LuaValueIterator(cfgTable);
+        if (!cfgTable.get("import").isnil()) {
+            // process import entry first to be sure imports are registered
+            // before creating components
+            setImport(cfgTable.get("import"));
+        }
+        while (it.hasNext()) {
+            it.next();
+            if (!"import".equals(it.key().toString())) {
+                setObjectAttribute(this,it.key().toString(),it.value());
+            }
         }
     }
 
@@ -253,6 +295,7 @@ ex.printStackTrace();
     private View _view;
     private Hashtable<String,IAvatar> _avatars=new Hashtable<String,IAvatar>();
     private Vector<StopHandler> _toStop=new Vector<StopHandler>();
+    private Vector<String> _imports=new Vector<String>();
 
     public static void TRACE(String msg) {
         StackTraceElement st=(new Throwable()).getStackTrace()[1];

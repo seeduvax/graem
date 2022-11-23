@@ -1,43 +1,40 @@
 graem:setup({
+    import={
+        "net.eduvax.graem"
+    },
     components={
         Sky={
-            class="net.eduvax.graem.SkyBox",
+            class="SkyBox",
         },
         Light={
-            class="net.eduvax.graem.DefaultLight",
-            set={
-                shadowmapSize=4096
-            }
+            class="DefaultLight",
+            shadowmapSize=4096
         },
-        Playfield={ class="net.eduvax.graem.Playfield" },
-        Trajectory={
-            class="net.eduvax.graem.Trajectory",
+        Playfield={ class="Playfield" },
+        ["Mobile Object Trajectory"]={
+            class="Trajectory",
             bind={
                 time="time",
                 location="world.body.loc",
             },
-            set={
-                changeOfBasis={
-                    class="net.eduvax.graem.BasisLLAtoJMErel"
-                }
+            changeOfBasis={
+                class="BasisLLAtoJMErel"
             }
         },
         ["Mobile Object"]={
-            class="net.eduvax.graem.DummyAvatar",
+            class="DummyAvatar",
             bind={
                 time="time",
                 location="world.body.loc",
                 attitude="world.body.q",
                 split="split"
             },
-            set={
-                changeOfBasis={
-                    class="net.eduvax.graem.BasisLLAtoJMErel"
-                }
+            changeOfBasis={
+                class="BasisLLAtoJMErel"
             }
         },
         cam={
-            class="net.eduvax.graem.AutoChaseCam",
+            class="AutoChaseCam",
         }
     },
 })
