@@ -154,6 +154,9 @@ ex.printStackTrace();
         return res;
     }
 
+    public Object create(String name, Class<?> c) {
+        return create(name,c.getName());
+    }
 
     private Object create(String name, String className) {
         try {

@@ -22,7 +22,7 @@ import java.util.Vector;
  *
  */
 public class GraemApp implements Runnable {
-    class Option {
+    public class Option {
         public Option(String name, String help) {
             _name=name;
             _help=help;
@@ -70,8 +70,15 @@ public class GraemApp implements Runnable {
         });
     }
 
+    protected View newView() {
+        return new View();
+    }
+    protected Graem newGraem(View v) {
+        return new Graem(v);
+    }
+
     public void init(String[] args) {
-        _view = new View();
+        _view = newView();
         _files=new Vector<String>();
         boolean toon=false;
         int tcpPort=0;
@@ -96,7 +103,7 @@ public class GraemApp implements Runnable {
             System.err.println("Run with -h option for help.");
             System.exit(1);
         }
-        _graem=new Graem(_view);
+        _graem=newGraem(_view);
 
 
         _lua=new LuaShell();
@@ -151,7 +158,7 @@ public class GraemApp implements Runnable {
     public void help() {
         System.out.println(_helpHeader);
         for (Enumeration<Option> e=_options.elements();e.hasMoreElements();) {
-             System.out.println("    -"+e.nextElement().getMsg());
+             System.out.println("    "+e.nextElement().getMsg());
         }
     }
 
