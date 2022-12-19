@@ -40,6 +40,7 @@ public class View extends SimpleApplication {
         _settings.setTitle("GraEm - data projectionist");
         _settings.setVSync(true);
         _settings.setResolution(1280,768);
+        _settings.setGammaCorrection(true);
     }
 
     public AppSettings getSettings() {

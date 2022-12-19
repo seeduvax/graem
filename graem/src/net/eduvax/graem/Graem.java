@@ -16,6 +16,8 @@ import org.luaj.vm2.Varargs;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 /**
  *
  */
@@ -292,6 +294,25 @@ ex.printStackTrace();
         for (StopHandler h: _toStop) {
             h.stop();
         }
+    }
+
+
+    public void dump(int level, Spatial from) {
+        for (int i=0;i<level;i++) {
+            System.out.print("  ");
+        }
+        System.out.println(from.getName());
+        if (from instanceof Node) {
+            Node n=(Node)from;
+            int nl=level+1;
+            for (Spatial s: n.getChildren()) {
+                dump(nl,s);
+            }
+        }
+    }
+
+    public void dump() {
+        dump(0,_view.getRootNode());
     }
 
     private BindMap _bindMap=new BindMap();
