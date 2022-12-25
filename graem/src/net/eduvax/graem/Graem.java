@@ -131,6 +131,12 @@ public class Graem {
                 m.invoke(o,value.toString());
                 res=true;
             }
+            else if (value.isboolean()) {
+                Method m=o.getClass().getMethod(setName,new Class[]{boolean.class});
+
+                m.invoke(o,value.toboolean());
+                res=true;
+            }
             else {
                 Method m=o.getClass().getMethod(setName,new Class[]{LuaValue.class});
                 m.invoke(o,value);

@@ -20,10 +20,12 @@ import com.jme3.scene.Node;
 public class SimpleAvatar extends Avatar implements ISceneComposition {
     // ISCeneComposition implementation
     @Override public void build(View view) {
-        ModelKey key=new ModelKey(_modelPath);
-        _node=(Node)view.getAssetManager().loadModel(key);
-        _node.setName(getName());
-        view.getRootNode().attachChild(_node);
+        if (_modelPath!=null) {
+            ModelKey key=new ModelKey(_modelPath);
+            _node=(Node)view.getAssetManager().loadModel(key);
+            _node.setName(getName());
+            view.getRootNode().attachChild(_node);
+        }
     }
     @Override public synchronized void update(float tpf) {
         double[] l=getLocation();
@@ -38,6 +40,10 @@ public class SimpleAvatar extends Avatar implements ISceneComposition {
         _modelPath=mp;
     }
 
-    private String _modelPath;
+    protected Node getRootNode() {
+        return _node;
+    }
+
+    private String _modelPath=null;
     private Node _node;
 }
