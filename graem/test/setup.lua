@@ -6,9 +6,15 @@ graem:setup({
         Sky={
             class="SkyBox",
         },
-        Light={
-            class="DefaultLight",
-            shadowmapSize=4096
+        Sun={
+            class="DirLight",
+            shadowmapSize=4096,
+            r=0.5, g=0.5, b=0.5,
+        },
+        Ambiant={
+            class="AmbLight",
+            shadowmapSize=4096,
+            r=0.5, g=0.5, b=0.5,
         },
         Playfield={ class="Playfield" },
         ["Mobile Object Trajectory"]={
