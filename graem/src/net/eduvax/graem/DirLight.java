@@ -30,7 +30,7 @@ public class DirLight extends SceneComposition {
         ViewPort viewPort=view.getViewPort();
 
         DirectionalLight light = new DirectionalLight();
-        light.setColor(ColorRGBA.White);
+        light.setColor(new ColorRGBA(_r,_g,_b,1.0f));
         light.setDirection(new Vector3f(_x,_y,_z).normalizeLocal());
         parent.addLight(light);
 

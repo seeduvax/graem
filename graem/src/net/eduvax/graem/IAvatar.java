@@ -15,8 +15,8 @@ import com.jme3.input.ChaseCamera;
  */
 public interface IAvatar extends INamedObject {
     void setTime(double time);
-    void setLocation(double x, double y, double z);
-    void setAttitude(double w,double x,double y, double z);
+    void setLocation(double[] l);
+    void setAttitude(double[] a);
     void setAttribute(String attrName,double[] value);
     void setChangeOfBasis(IChangeOfBasis cb);
 }

@@ -76,17 +76,13 @@ public class DummyAvatar extends Avatar implements ISceneComposition {
         q.nlerp(getAttitude(),0.2f);
         _node.setLocalRotation(q);
 
-        Avatar.AttrChange ac=pollAttrChange();
-        while (ac!=null) {
-            if ("split".equals(ac._name)&&ac._values[0]==1) {
-                _split=true;
-            }
-            ac=pollAttrChange();
-        }
         if (_split) {
             Vector3f tl=_tail.getLocalTranslation();
             tl.setY(tl.getY()-0.1f);
         }
+    }
+    public void setSplit(double[] v) {
+        _split=v[0]!=0;
     }
     private Node _node;
     private Node _tail;

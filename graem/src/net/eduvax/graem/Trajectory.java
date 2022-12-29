@@ -27,20 +27,10 @@ public class Trajectory extends Avatar implements ISceneComposition {
     @Override public void build(View view) {
         _mat=new Material(view.getAssetManager(),"Common/MatDefs/Misc/Unshaded.j3md");
         _mat.getAdditionalRenderState().setLineWidth(2f);
-        _mat.setColor("Color",ColorRGBA.Red);
+        _mat.setColor("Color",new ColorRGBA(_r,_g,_b,1.0f));
         _node=new Node(getName());
         view.getRootNode().attachChild(_node);
         _count=0;
-    }
-
-    /**
-     * Call parent's location and set new point avalaible status.
-     */ 
-    @Override public void setLocation(double x, double y, double z) {
-        super.setLocation(x,y,z);
-        synchronized(this) {
-            _newPoint=true;
-        }
     }
 
     /**
@@ -49,17 +39,18 @@ public class Trajectory extends Avatar implements ISceneComposition {
     @Override public void update(float tpf) {
         boolean newPoint=false;
         synchronized(this) {
-            newPoint=_newPoint;
-            _newPoint=false;
+            double[] loc=getLocation();
+            newPoint=loc!=_loc;
+            if (newPoint) {
+                _loc=loc;
+            }
         }
         if (newPoint) {
             if (_segStart==null) {
-                double[] loc=getLocation();
-                _segStart=new float[]{(float)loc[0],(float)loc[1],(float)loc[2]};
+                _segStart=new float[]{(float)_loc[0],(float)_loc[1],(float)_loc[2]};
             }
             else {
                 _count++;
-                double[] loc=getLocation();
                 Mesh mesh=new Mesh();
                 mesh.setMode(Mesh.Mode.Lines);
                 Geometry segment = new Geometry("Segment"+_count, mesh);
@@ -68,24 +59,38 @@ public class Trajectory extends Avatar implements ISceneComposition {
                             _segStart[0],
                             _segStart[1],
                             _segStart[2],
-                            (float)loc[0],
-                            (float)loc[1],
-                            (float)loc[2]
+                            (float)_loc[0],
+                            (float)_loc[1],
+                            (float)_loc[2]
                         });
                 mesh.setBuffer(VertexBuffer.Type.Index, 2, new short[]{ 0, 1 });
                 mesh.updateBound();
                 mesh.updateCounts();
                 _node.attachChild(segment);
-                _segStart[0]=(float)loc[0];
-                _segStart[1]=(float)loc[1];
-                _segStart[2]=(float)loc[2];
+                _segStart[0]=(float)_loc[0];
+                _segStart[1]=(float)_loc[1];
+                _segStart[2]=(float)_loc[2];
             }
         }
+    }
+
+    public void setR(double r) {
+        _r=(float)r;
+    }
+    public void setG(double g) {
+        _g=(float)g;
+    }
+    public void setB(double b) {
+        _b=(float)b;
     }
 
     private Material _mat;
     private Node _node;
     private long _count;
     private float[] _segStart;
+    private double[] _loc=null;
     private boolean _newPoint=false;
+    private float _r=1.0f;
+    private float _g=0.0f;
+    private float _b=0.0f;
 }

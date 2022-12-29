@@ -16,12 +16,14 @@ import org.luaj.vm2.Varargs;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
+
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 /**
  *
  */
 public class Graem {
+
     public Graem(View v) {
         _view=v;
     }
@@ -152,11 +154,11 @@ public class Graem {
                     +" because of security rules: "+secEx.getMessage());
         }
         catch (InvocationTargetException itex) {
-            System.err.println("Can:'t set attribute "+name+": "+itex.getCause().getMessage());
+            System.err.println("Can't set attribute "+name+": "+itex.getCause().getMessage());
 itex.getCause().printStackTrace();
         }
         catch (Exception ex) {
-            System.err.println("Can:'t set attribute "+name+": "+ex.getMessage());
+            System.err.println("Can't set attribute "+name+": "+ex.getMessage());
 ex.printStackTrace();
         }
         return res;
@@ -198,11 +200,26 @@ ex.printStackTrace();
                 // ignore class attribute since it is already processed
                 // when entering this method.
                 if (!"class".equals(it.key().toString())) {
-                    if (o instanceof IAvatar && "bind".equals(it.key().toString())) {
+                    if ("bind".equals(it.key().toString())) {
                         LuaValueIterator bindIt=new LuaValueIterator(it.value());
                         while (bindIt.hasNext()) {
                             bindIt.next();
-                            bind(bindIt.value().toString(),(IAvatar)o,bindIt.key().toString());
+                            if (bindIt.value().isstring()) {
+                                String attrName=bindIt.value().toString();
+                                String setName="set"+attrName.substring(0,1).toUpperCase()+attrName.substring(1);
+                                double[] param={0.0};
+                                Method m=findMatchingMethod(o,setName,param);
+                                if (m!=null) {
+                                    bind(bindIt.key().toString(),o,m);
+                                }
+                                else {
+System.err.println("Can't bind "+bindIt.key() + " to "+bindIt.value()
+        +", object "+o+" has no compatible method "+setName);
+                                }
+                            }
+                            if (bindIt.value().isfunction()) {
+                                bind(bindIt.key().toString(),o,bindIt.value());
+                            }
                         }
                     }
                     setObjectAttribute(o,it.key().toString(),it.value());
@@ -279,8 +296,11 @@ ex.printStackTrace();
         }
     }
 
-    public void bind(String dataName, IAvatar avatar, String attrName) {
-        _bindMap.bind(dataName,avatar,attrName);
+    public void bind(String dataName, Object o, Method m) {
+        _bindMap.bind(dataName,o,m);
+    }
+    public void bind(String dataName, Object o, LuaValue f) {
+        _bindMap.bind(dataName,o,f);
     }
 
     public void set(LuaValue t) {
@@ -319,6 +339,10 @@ ex.printStackTrace();
 
     public void dump() {
         dump(0,_view.getRootNode());
+    }
+
+    public IAvatar get(String name) {
+        return _avatars.get(name);
     }
 
     private BindMap _bindMap=new BindMap();

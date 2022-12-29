@@ -1,3 +1,7 @@
+function setTime(o,t) 
+    o:setTime(t[0])
+end
+
 graem:setup({
     import={
         "net.eduvax.graem"
@@ -20,8 +24,10 @@ graem:setup({
         ["Mobile Object Trajectory"]={
             class="Trajectory",
             bind={
-                time="time",
-                location="world.body.loc",
+                time=setTime,
+                ["world.body.loc"]=function(a,v)
+                    a:setLocation(v)
+                end,
             },
             changeOfBasis={
                 class="BasisLLAtoJMErel"
@@ -30,9 +36,9 @@ graem:setup({
         ["Mobile Object"]={
             class="DummyAvatar",
             bind={
-                time="time",
-                location="world.body.loc",
-                attitude="world.body.q",
+                time=setTime,
+                ["world.body.loc"]="location",
+                ["world.body.q"]="attitude",
                 split="split"
             },
             changeOfBasis={
