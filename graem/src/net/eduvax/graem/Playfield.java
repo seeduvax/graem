@@ -61,6 +61,7 @@ public class Playfield extends SceneComposition {
         parent.attachChild(box);
     }
 
+
     @Override public void build(View view) {
         Node parent=view.getRootNode();
         _assetManager=view.getAssetManager();
