@@ -205,19 +205,9 @@ ex.printStackTrace();
                         while (bindIt.hasNext()) {
                             bindIt.next();
                             if (bindIt.value().isstring()) {
-                                String attrName=bindIt.value().toString();
-                                String setName="set"+attrName.substring(0,1).toUpperCase()+attrName.substring(1);
-                                double[] param={0.0};
-                                Method m=findMatchingMethod(o,setName,param);
-                                if (m!=null) {
-                                    bind(bindIt.key().toString(),o,m);
-                                }
-                                else {
-System.err.println("Can't bind "+bindIt.key() + " to "+bindIt.value()
-        +", object "+o+" has no compatible method "+setName);
-                                }
+                                bind(bindIt.key().toString(),o,bindIt.value().toString());
                             }
-                            if (bindIt.value().isfunction()) {
+                            else if (bindIt.value().isfunction()) {
                                 bind(bindIt.key().toString(),o,bindIt.value());
                             }
                         }
@@ -296,6 +286,18 @@ System.err.println("Can't bind "+bindIt.key() + " to "+bindIt.value()
         }
     }
 
+    public void bind(String dataName, Object o, String attrName) {
+        String setName="set"+attrName.substring(0,1).toUpperCase()+attrName.substring(1);
+        double[] param={0.0};
+        Method m=findMatchingMethod(o,setName,param);
+        if (m!=null) {
+            _bindMap.bind(dataName,o,m);
+        }
+        else {
+System.err.println("Can't bind " + dataName + " to " + attrName
+        +", object "+o+" has no compatible method "+setName);
+        }
+    }
     public void bind(String dataName, Object o, Method m) {
         _bindMap.bind(dataName,o,m);
     }
