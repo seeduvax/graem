@@ -55,7 +55,7 @@ public class Graem {
         Object o=null;
         try {
             Class<?> c=findClass(className);
-            Class<?>[] ctrArgs= new Class[]{};
+            Class<?>[] ctrArgs= new Class<?>[]{};
             o=c.getConstructor(ctrArgs).newInstance();
         }
         catch (Exception ex) {
@@ -64,18 +64,12 @@ public class Graem {
         return o;
     }
 
-    private Method findMatchingMethod(Object o,String name, Object param) {
+    private Method findMatchingMethod(Object o,String name, Class<?> paramType) {
         for (Method m: o.getClass().getMethods()) {
             if (m.getName().equals(name)) {
-                Class[] pc=m.getParameterTypes();
-                if (pc.length==1) {
-                    try {
-                        pc[0].cast(param);
-                        return m;
-                    }
-                    catch (ClassCastException ex) {
-                        // type not matching, just keep searching.
-                    }
+                Class<?>[] pc=m.getParameterTypes();
+                if (pc.length==1 && pc[0].isAssignableFrom(paramType)) {
+                    return m;
                 }
             }
         }
@@ -89,7 +83,7 @@ public class Graem {
             if (value.istable() && !value.get("class").isnil()) {
                 Object a=create(value);
                 if (a!=null) {
-                    Method m=findMatchingMethod(o,setName,a);
+                    Method m=findMatchingMethod(o,setName,a.getClass());
                     if (m!=null) {
                         m.invoke(o,a);
                         res=true;
@@ -289,7 +283,10 @@ ex.printStackTrace();
     public void bind(String dataName, Object o, String attrName) {
         String setName="set"+attrName.substring(0,1).toUpperCase()+attrName.substring(1);
         double[] param={0.0};
-        Method m=findMatchingMethod(o,setName,param);
+        Method m=findMatchingMethod(o,setName,param.getClass());
+        if (m==null) {
+            m=findMatchingMethod(o,setName,double.class);
+        }
         if (m!=null) {
             _bindMap.bind(dataName,o,m);
         }

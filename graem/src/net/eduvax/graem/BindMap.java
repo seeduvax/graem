@@ -44,6 +44,27 @@ ex.getCause().printStackTrace();
         }
     }
 
+    private class MethodScalarCallHandler implements IHandler {
+        private Method _m;
+        private Object _o;
+        private boolean _err=false;
+        public MethodScalarCallHandler(Object o, Method m) {
+            _o=o;
+            _m=m;
+        }
+        @Override public void handle(double[] values) {
+            try {
+                _m.invoke(_o,values[0]);
+            }
+            catch (Exception ex) {
+                if (!_err) {
+                    System.err.println("Can't handle data with obect"+_o+": "+ex.getMessage());
+ex.getCause().printStackTrace();
+                }
+            }
+        }
+    }
+
     private class LuaHandler implements IHandler {
         public LuaHandler(Object target, LuaValue f) {
             _target=CoerceJavaToLua.coerce(target);
@@ -69,7 +90,12 @@ ex.getCause().printStackTrace();
 
     public void bind(String dataName, Object o, Method m) {
         Vector<IHandler> v=getVect(dataName);
-        v.add(new MethodCallHandler(o,m));
+        if (m.getParameterTypes()[0]==double.class) {
+            v.add(new MethodScalarCallHandler(o,m));
+        }
+        else {
+            v.add(new MethodCallHandler(o,m));
+        }
     }
     public void bind(String dataName, Object o, LuaValue f) {
         Vector<IHandler> v=getVect(dataName);
