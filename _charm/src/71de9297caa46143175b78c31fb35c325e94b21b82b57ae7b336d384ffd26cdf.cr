@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<cr id="71de9297caa46143175b78c31fb35c325e94b21b82b57ae7b336d384ffd26cdf" state="open">
+<cr id="71de9297caa46143175b78c31fb35c325e94b21b82b57ae7b336d384ffd26cdf" state="working">
 <title>Release graem 0.1</title>
 <reporter>sdevaux</reporter>
 <creation>2022-10-31 18:28:25+01:00</creation>
@@ -16,5 +16,5 @@
 <link name="child">71079d171f6363cabc159baa277c2f960d650470a7128528a5a59d136ae27fe4</link>
 <link name="child">971cd834ceb4f1e84d45a9b3efc71231a5534b035cf9434889b94d25419a0101</link>
 </links>
-<cf v="null"/>
+<cf v="sdevaux 2023-01-02T13:30:47+01:00"/>
 </cr>
