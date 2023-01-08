@@ -15,11 +15,18 @@ import com.jme3.math.Vector3f;
 /**
  *
  */
-public class BasisLLAtoJME implements IChangeOfBasis {
-    @Override public double[] v(double t,double x, double y, double z) {
-        return new double[]{-y,z,-x};
+public class BasisLLAtoJME extends DataProvider {
+    void setV(double[] v) {
+        getConsumer().handleData(_vName,new double[]{-v[1],v[2],-v[0]});
     }
-    @Override public Quaternion q(double t,double x, double y, double z, double w) {
-        return new Quaternion((float)-y,(float)z,(float)-x,(float)w);
+    void setQ(double[] q) {
+        getConsumer().handleData(_qName,new double[]{-q[1],q[2],-q[0],q[3]});
     }
+    @Override public void setName(String name) {
+        super.setName(name);
+        _vName=name+".v";
+        _qName=name+".q";
+    }
+    private String _vName;
+    private String _qName;
 }
