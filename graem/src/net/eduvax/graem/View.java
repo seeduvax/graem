@@ -14,8 +14,6 @@ import java.util.Hashtable;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.AssetManager;
-import com.jme3.font.BitmapText;
-import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
@@ -26,6 +24,7 @@ import com.jme3.input.FlyByCamera;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.font.BitmapFont;
 
 /**
  *
@@ -50,12 +49,6 @@ public class View extends SimpleApplication {
         _toAdd.add(comp);
     }
     @Override public void simpleInitApp() {
-        _hudText=new BitmapText(guiFont);
-        _hudText.setColor(ColorRGBA.Yellow);
-        _hudText.setSize(guiFont.getCharSet().getRenderedSize());
-        _hudText.setLocalTranslation(10f,10f+_hudText.getLineHeight(),0);
-        _hudText.setText("Hello Graem");
-        guiNode.attachChild(_hudText); 
         inputManager.addMapping("nextCam",new KeyTrigger(KeyInput.KEY_PGUP));
         inputManager.addListener(new ActionListener() {
             @Override 
@@ -70,6 +63,14 @@ public class View extends SimpleApplication {
                 if (pressed) handleEvent("prevCam");
             }
         },"prevCam");
+    }
+
+    public Node getGuiNode() {
+        return guiNode;
+    }
+
+    public BitmapFont getGuiFont() {
+        return guiFont;
     }
 
 
@@ -109,15 +110,10 @@ public class View extends SimpleApplication {
         }
     }
 
-    protected BitmapText getHudText() {
-        return _hudText;
-    }
-    
     private Vector<ISceneComposition> _toAdd=new Vector<ISceneComposition>();
     private Vector<ISceneComposition> _sceneElements=
                                            new Vector<ISceneComposition>();
     private AppSettings _settings=new AppSettings(true);
-    private BitmapText _hudText;
     private Hashtable<String,Vector<Runnable>> _eventHandlers=new Hashtable<String,Vector<Runnable>>();
     private void handleEvent(String name) {
         Vector<Runnable> toRun=_eventHandlers.get(name);
