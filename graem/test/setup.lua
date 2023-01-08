@@ -22,29 +22,40 @@ graem:setup({
         },
         Playfield={ class="Playfield" },
         Axes={ class="Axes" },
+        JMERef={
+            class="BasisLLAtoJMErel",
+            bind={
+                ["world.body.loc"]="v",
+                ["world.body.q"]="q",
+            }
+        },
         ["Mobile Object Trajectory"]={
             class="Trajectory",
             bind={
                 time=setTime,
-                ["world.body.loc"]=function(a,v)
+                ["JMERef.v"]=function(a,v)
                     a:setLocation(v)
                 end,
             },
-            changeOfBasis={
-                class="BasisLLAtoJMErel"
-            }
         },
         ["Mobile Object"]={
             class="DummyAvatar",
             bind={
                 time=setTime,
-                ["world.body.loc"]="location",
-                ["world.body.q"]="attitude",
+                ["JMERef.v"]="location",
+                ["JMERef.q"]="attitude",
                 split="split"
             },
-            changeOfBasis={
-                class="BasisLLAtoJMErel"
-            }
+        },
+        simTime={
+            class="HudText",
+            x=10,y=600,
+            bind={
+                time=function(a,v)
+                    local str="t="..v[1].."s"
+                    a:setText(str);
+                end
+            },
         },
         cam={
             class="AutoChaseCam",

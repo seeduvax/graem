@@ -16,10 +16,11 @@ import com.jme3.math.Vector3f;
  *
  */
 public class BasisLLAtoJME extends DataProvider {
-    void setV(double[] v) {
+    public void setV(double[] v) {
+Graem.TRACE(""+v);
         getConsumer().handleData(_vName,new double[]{-v[1],v[2],-v[0]});
     }
-    void setQ(double[] q) {
+    public void setQ(double[] q) {
         getConsumer().handleData(_qName,new double[]{-q[1],q[2],-q[0],q[3]});
     }
     @Override public void setName(String name) {

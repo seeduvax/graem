@@ -14,11 +14,11 @@ import com.jme3.math.Vector3f;
  *
  */
 public class BasisLLAtoJMErel extends BasisLLAtoJME {
-    @Override public double[] v(double t, double x, double y, double z) {
+    @Override public void setV(double[] v) {
         if (_origin==null) {
-            _origin=new double[]{x,y,z};
+            _origin=new double[]{v[0],v[1],v[2]};
         }
-        return super.v(t,x-_origin[0],y-_origin[1],z-_origin[2]);
+        super.setV(new double[]{v[0]-_origin[0],v[1]-_origin[1],v[2]-_origin[2]});
     }
 
     double[] _origin=null;
