@@ -19,6 +19,7 @@ import com.jme3.bounding.BoundingSphere;
 import com.jme3.bounding.BoundingVolume;
 import com.jme3.renderer.Camera;
 import com.jme3.math.Vector3f;
+import com.jme3.math.ColorRGBA;
 /**
  *
  */
@@ -28,7 +29,6 @@ public class AutoChaseCam extends SceneComposition {
         _root=view.getRootNode();
         _flyCam=view.getFlyCam();
         _flyCam.setMoveSpeed(100.0f);
-        _hudText=view.getHudText();
         _view.registerEventHandler("nextCam",new Runnable() {
                     @Override public void run() {
                         nextCam();
@@ -39,6 +39,12 @@ public class AutoChaseCam extends SceneComposition {
                         prevCam();
                     }
                 });
+        _hudText=new BitmapText(_view.getGuiFont());
+        _hudText.setColor(ColorRGBA.Yellow);
+        _hudText.setSize(_view.getGuiFont().getCharSet().getRenderedSize());
+        _hudText.setLocalTranslation(10f,10f+_hudText.getLineHeight(),0);
+        _hudText.setText("Hello Graem");
+        _view.getGuiNode().attachChild(_hudText); 
     }
 
     public void nextCam() {

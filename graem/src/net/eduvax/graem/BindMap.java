@@ -18,7 +18,7 @@ import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 /**
  *
  */
-public class BindMap {
+public class BindMap implements IDataConsumer {
     private interface IHandler {
         public void handle(double[] values);
     }
@@ -101,7 +101,7 @@ ex.getCause().printStackTrace();
         Vector<IHandler> v=getVect(dataName);
         v.add(new LuaHandler(o,f));
     }
-    public void handleData(String name, double[] values) {
+    @Override public void handleData(String name, double[] values) {
          Vector<IHandler> v=_map.get(name);
          if (v!=null) {
              for (IHandler h: v) {

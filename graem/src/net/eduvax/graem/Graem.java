@@ -92,49 +92,49 @@ public class Graem {
             }
             else if (value.isint()) {
                 try {
-                    Method m=o.getClass().getMethod(setName,new Class[]{int.class});
+                    Method m=o.getClass().getMethod(setName,new Class<?>[]{int.class});
                     m.invoke(o,value.toint());
                 }
                 catch (NoSuchMethodException nsmEx1) {
                     try {
-                        Method m=o.getClass().getMethod(setName,new Class[]{long.class});
+                        Method m=o.getClass().getMethod(setName,new Class<?>[]{long.class});
                         m.invoke(o,value.tolong());
                     }
                     catch (NoSuchMethodException nsmEx2) {
-                        Method m=o.getClass().getMethod(setName,new Class[]{double.class});
+                        Method m=o.getClass().getMethod(setName,new Class<?>[]{double.class});
                         m.invoke(o,value.todouble());
                     }
                 }
             }
             else if (value.islong()) {
                 try {
-                    Method m=o.getClass().getMethod(setName,new Class[]{long.class});
+                    Method m=o.getClass().getMethod(setName,new Class<?>[]{long.class});
                     m.invoke(o,value.tolong());
                 }
                 catch (NoSuchMethodException nsmEx) {
-                    Method m=o.getClass().getMethod(setName,new Class[]{double.class});
+                    Method m=o.getClass().getMethod(setName,new Class<?>[]{double.class});
                     m.invoke(o,value.todouble());
                 }
             }
             else if (value.isnumber()) {
-                Method m=o.getClass().getMethod(setName,new Class[]{double.class});
+                Method m=o.getClass().getMethod(setName,new Class<?>[]{double.class});
 
                 m.invoke(o,value.todouble());
                 res=true;
             }
             else if (value.isstring()) {
-                Method m=o.getClass().getMethod(setName,new Class[]{String.class});
+                Method m=o.getClass().getMethod(setName,new Class<?>[]{String.class});
                 m.invoke(o,value.toString());
                 res=true;
             }
             else if (value.isboolean()) {
-                Method m=o.getClass().getMethod(setName,new Class[]{boolean.class});
+                Method m=o.getClass().getMethod(setName,new Class<?>[]{boolean.class});
 
                 m.invoke(o,value.toboolean());
                 res=true;
             }
             else {
-                Method m=o.getClass().getMethod(setName,new Class[]{LuaValue.class});
+                Method m=o.getClass().getMethod(setName,new Class<?>[]{LuaValue.class});
                 m.invoke(o,value);
                 res=true;
             }
@@ -176,6 +176,10 @@ ex.printStackTrace();
             }
             if (o instanceof IAvatar) {
                 _avatars.put(name,(IAvatar)o);
+            }
+            if (o instanceof IDataProvider) {
+                IDataProvider dp=(IDataProvider)o;
+                dp.setConsumer(_bindMap);
             }
             return o;
         }
