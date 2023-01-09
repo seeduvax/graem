@@ -17,7 +17,6 @@ import com.jme3.math.Vector3f;
  */
 public class BasisLLAtoJME extends DataProvider {
     public void setV(double[] v) {
-Graem.TRACE(""+v);
         getConsumer().handleData(_vName,new double[]{-v[1],v[2],-v[0]});
     }
     public void setQ(double[] q) {

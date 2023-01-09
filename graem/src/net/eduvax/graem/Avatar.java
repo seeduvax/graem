@@ -29,24 +29,17 @@ public abstract class Avatar implements IAvatar {
         _time=time;
     }
     
-    public void setLocation(double x, double y, double z) {
-        _location=_cb.v(_time,x,y,z);
-    }
     @Override public void setLocation(double[] l) {
-        setLocation(l[0],l[1],l[2]);
+        _location=l;
     }
 
-    public void setAttitude(double x, double y, double z, double w) {
-        _attitude=_cb.q(_time,x,y,z,w);
-    }
     @Override public void setAttitude(double[] a) {
         if (a.length>=4) {
-            setAttitude(a[0],a[1],a[2],a[3]);
+            _attitude=new Quaternion((float)a[0],(float)a[1],(float)a[2],(float)a[3]);
         }
         else if (a.length==3) {
             float[] f={(float)a[0],(float)a[1],(float)a[2]};
-            Quaternion q=new Quaternion(f);
-            setAttitude(q.getX(),q.getY(),q.getZ(),q.getW());
+            _attitude=new Quaternion(f);
         }
     }
 
@@ -54,10 +47,6 @@ public abstract class Avatar implements IAvatar {
         _attrChangesQueue.add(new AttrChange(attrName,values));
     }
 
-    @Override public synchronized void setChangeOfBasis(IChangeOfBasis cb) {
-        _cb=cb;
-    }
-     
     protected synchronized double[] getLocation() {
         return _location;
     } 
@@ -83,5 +72,4 @@ public abstract class Avatar implements IAvatar {
     private double[] _location=new double[3];
     private Quaternion _attitude=new Quaternion();
     private LinkedList<AttrChange> _attrChangesQueue=new LinkedList<AttrChange>();
-    private IChangeOfBasis _cb=new BasisIdentity();
 }

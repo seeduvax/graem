@@ -18,5 +18,4 @@ public interface IAvatar extends INamedObject {
     void setLocation(double[] l);
     void setAttitude(double[] a);
     void setAttribute(String attrName,double[] value);
-    void setChangeOfBasis(IChangeOfBasis cb);
 }
