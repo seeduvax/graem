@@ -350,9 +350,12 @@ System.err.println("Can't bind " + dataName + " to " + attrName
     private Vector<StopHandler> _toStop=new Vector<StopHandler>();
     private Vector<String> _imports=new Vector<String>();
 
-    public static void TRACE(String msg) {
-        StackTraceElement st=(new Throwable()).getStackTrace()[1];
+    public static void TRACE(String msg,int l) {
+        StackTraceElement st=(new Throwable()).getStackTrace()[l+1];
         System.out.println("TRACE["+st.getClassName()+"."+st.getMethodName()
             +"():"+st.getLineNumber()+"]: "+msg);
+    }
+    public static void TRACE(String msg) {
+        TRACE(msg,1);
     }
 }
