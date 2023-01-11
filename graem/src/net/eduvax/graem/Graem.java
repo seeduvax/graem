@@ -90,6 +90,20 @@ public class Graem {
                     }
                 }
             }
+            // TODO shall find a better way to manage all the cases related to
+            // the ugly condition here after
+            else if (value.istable() && !(o==this && ("components".equals(name) || "import".equals(name))) && !(o!=this&&"bind".equals(name))) {
+                double[] values=new double[value.length()];
+                for (int i=0;i<value.length();i++) {
+                    values[i]=value.get(i+1).todouble();
+                }
+                Method m=findMatchingMethod(o,setName,values.getClass());
+                if (m!=null) {
+                    m.invoke(o,values);
+                    res=true;
+                }
+            }
+
             else if (value.isint()) {
                 try {
                     Method m=o.getClass().getMethod(setName,new Class<?>[]{int.class});
