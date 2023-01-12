@@ -188,8 +188,8 @@ ex.printStackTrace();
             if (o instanceof ISceneComposition) {
                 _view.add((ISceneComposition)o);
             }
-            if (o instanceof IAvatar) {
-                _avatars.put(name,(IAvatar)o);
+            if (name!=null && o instanceof INamedObject) {
+                _components.put(name,(INamedObject)o);
             }
             if (o instanceof IDataProvider) {
                 IDataProvider dp=(IDataProvider)o;
@@ -358,13 +358,13 @@ System.err.println("Can't bind " + dataName + " to " + attrName
         dump(0,_view.getRootNode());
     }
 
-    public IAvatar get(String name) {
-        return _avatars.get(name);
+    public INamedObject get(String name) {
+        return _components.get(name);
     }
 
     private BindMap _bindMap=new BindMap();
     private View _view;
-    private Hashtable<String,IAvatar> _avatars=new Hashtable<String,IAvatar>();
+    private Hashtable<String,INamedObject> _components=new Hashtable<String,INamedObject>();
     private Vector<StopHandler> _toStop=new Vector<StopHandler>();
     private Vector<String> _imports=new Vector<String>();
 
