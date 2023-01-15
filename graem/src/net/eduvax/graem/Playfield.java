@@ -69,18 +69,16 @@ public class Playfield extends SceneComposition {
         parent.attachChild(playfield);
 
         Node ground=new Node("Ground");
-        addTransparentBox("NE",ground,500f,0.01f,500f,new Vector3f(-500,-0.005f,-500),new ColorRGBA(0.6f,0.6f,0.8f,0.7f));
-        addTransparentBox("NW",ground,500f,0.01f,500f,new Vector3f(-500,-0.005f,500),new ColorRGBA(0.6f,0.8f,0.6f,0.7f));
-        addTransparentBox("SE",ground,500f,0.01f,500f,new Vector3f(500,-0.005f,500),new ColorRGBA(0.8f,0.6f,0.6f,0.7f));
-        addTransparentBox("sW",ground,500f,0.01f,500f,new Vector3f(500,-0.005f,-500),new ColorRGBA(0.8f,0.8f,0.6f,0.7f));
+        float halfSize=_size/2.0f;
+        float quartSize=_size/4.0f;
+        addTransparentBox("NE",ground,quartSize,0.01f,quartSize,new Vector3f(-quartSize,-0.005f,-quartSize),new ColorRGBA(0.6f,0.6f,0.8f,0.7f));
+        addTransparentBox("NW",ground,quartSize,0.01f,quartSize,new Vector3f(-quartSize,-0.005f,quartSize),new ColorRGBA(0.6f,0.8f,0.6f,0.7f));
+        addTransparentBox("SE",ground,quartSize,0.01f,quartSize,new Vector3f(quartSize,-0.005f,quartSize),new ColorRGBA(0.8f,0.6f,0.6f,0.7f));
+        addTransparentBox("sW",ground,quartSize,0.01f,quartSize,new Vector3f(quartSize,-0.005f,-quartSize),new ColorRGBA(0.8f,0.8f,0.6f,0.7f));
         playfield.attachChild(ground);
 
-        Node grid=new Node("Grid");
-        addGrid("NE",grid,51,51,10f,new Vector3f(-500, 0, -500),ColorRGBA.Black,2);
-        addGrid("NW",grid,51,51,10f,new Vector3f(-500, 0, 0),ColorRGBA.Black,2);
-        addGrid("SE",grid,51,51,10f,null,ColorRGBA.Black,2);
-        addGrid("SW",grid,51,51,10f,new Vector3f(0, 0, -500),ColorRGBA.Black,2);
-        playfield.attachChild(grid);
+        int gc=(int)(_size/_gridSize)+1;
+        addGrid("Grid0",playfield,gc,gc,_gridSize,new Vector3f(-halfSize, 0, -halfSize),ColorRGBA.Black,2);
 
 
         Material tb = new Material(_assetManager, "Common/MatDefs/Light/Lighting.j3md");
@@ -91,15 +89,34 @@ public class Playfield extends SceneComposition {
         tb.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
 
         
-        for (int i=1;i<10;i++) {
-            Geometry plate = new Geometry("Plate"+i, new Box(1000, 0.01f, 1000));
-            Transform ts=new Transform(new Vector3f(0,1000.0f*i-0.005f,0));
+        for (int i=1;i<=_levels;i++) {
+            float alt=_height*i/_levels;
+            Geometry plate = new Geometry("Plate"+i, new Box(halfSize, 0.01f, halfSize));
+            Transform ts=new Transform(new Vector3f(0,alt-0.005f,0));
             plate.setLocalTransform(ts);
             plate.setQueueBucket(RenderQueue.Bucket.Transparent);
             plate.setMaterial(tb);
             plate.setQueueBucket(RenderQueue.Bucket.Transparent);
             playfield.attachChild(plate);
-            addGrid("Grid"+i,playfield,101,101,10f,new Vector3f(-500, 1000.0f*i, -500),ColorRGBA.Black,2);
+            addGrid("Grid"+i,playfield,gc,gc,_gridSize,new Vector3f(-halfSize, alt, -halfSize),ColorRGBA.Black,2);
         }
     }
+
+    public void setSize(double s) {
+        _size=(float)s;
+    }
+    public void setGridSize(double s) {
+        _gridSize=(float)s;
+    }
+    public void setLevels(int l) {
+        _levels=l;
+    }
+    public void setHeight(double h) {
+        _height=(float)h;
+    }
+
+    private float _size=1000f;
+    private int _levels=10;
+    private float _height=10000f;
+    private float _gridSize=100f;
 }

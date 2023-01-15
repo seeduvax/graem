@@ -32,7 +32,7 @@ public class DummyAvatar extends Avatar implements ISceneComposition {
     private void addOrientationMarker(String name,Material mat,ColorRGBA c,float x, float z) {
         Material m=mat.clone();
         m.setColor("Ambient",c);
-        Geometry g=new Geometry("name",new Box(0.05f,1,0.05f));
+        Geometry g=new Geometry(name,new Box(0.05f,1,0.05f));
         g.setLocalTranslation(x,-0.05f,z);
         g.setMaterial(m);
         _tail.attachChild(g);
