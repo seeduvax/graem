@@ -20,12 +20,18 @@ public class HudText extends SceneComposition {
         _hudText.setColor(new ColorRGBA(_r,_g,_b,1.0f));
         _hudText.setSize(view.getGuiFont().getCharSet().getRenderedSize());
         _hudText.setLocalTranslation(_x,_y,0);
-        _hudText.setText(""+getName());
+        _text=getName();
         view.getGuiNode().attachChild(_hudText); 
     }
 
-    public void setText(String text) {
-        _hudText.setText(text);
+    @Override public void update(float tpf) {
+        synchronized (this) {
+            _hudText.setText(_text);
+        }
+    }
+
+    public synchronized void setText(String text) {
+        _text=text;
     }
     public void setR(double r) {
         _r=(float)r;
@@ -49,4 +55,5 @@ public class HudText extends SceneComposition {
     private float _x=0.0f;
     private float _y=0.0f;
     private BitmapText _hudText;
+    private String _text;
 }
