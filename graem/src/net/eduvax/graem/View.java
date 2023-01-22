@@ -18,6 +18,7 @@ import com.jme3.renderer.Renderer;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import com.jme3.input.InputManager;
 import com.jme3.input.FlyByCamera;
@@ -25,6 +26,7 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.font.BitmapFont;
+import com.jme3.math.Vector3f;
 
 /**
  *
@@ -105,10 +107,30 @@ public class View extends SimpleApplication {
                 _toAdd.clear();
             }
         }
+        if (_back!=null) {
+            translateNodes(_back);
+        }
         for (ISceneComposition c: _sceneElements) {
             c.update(tpf);
         }
+        if (_center!=null) {
+            translateNodes(_center);
+        }
     }
+
+    private void translateNodes(Vector3f t) {
+        for (Spatial s: rootNode.getChildren()) {
+            s.getLocalTranslation().add(t);
+        }
+    }
+    private void setCenter(Vector3f c) {
+        _back=c.clone();
+        _center=c.clone();
+        _center.mult(-1.0f);
+    }
+
+    private Vector3f _back=null;
+    private Vector3f _center=null;
 
     private Vector<ISceneComposition> _toAdd=new Vector<ISceneComposition>();
     private Vector<ISceneComposition> _sceneElements=
