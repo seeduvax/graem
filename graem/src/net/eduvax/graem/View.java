@@ -113,6 +113,7 @@ public class View extends SimpleApplication {
         for (ISceneComposition c: _sceneElements) {
             c.update(tpf);
         }
+        setCenter();
         if (_center!=null) {
             translateNodes(_center);
         }
@@ -120,17 +121,27 @@ public class View extends SimpleApplication {
 
     private void translateNodes(Vector3f t) {
         for (Spatial s: rootNode.getChildren()) {
-            s.getLocalTranslation().add(t);
+            s.setLocalTranslation(s.getLocalTranslation().add(t));
         }
     }
-    private void setCenter(Vector3f c) {
-        _back=c.clone();
-        _center=c.clone();
-        _center.mult(-1.0f);
+    private void setCenter() {
+        if (_centralNodeRequest!=null) {
+            _centralNode=rootNode.getChild(_centralNodeRequest);
+            _centralNodeRequest=null;
+        }
+        if (_centralNode!=null) {
+            _back=_centralNode.getLocalTranslation().clone();
+            _center=_back.clone().mult(-1.0f);
+        }
+    }
+    public synchronized void setCentralNode(String name) {
+        _centralNodeRequest=name;
     }
 
     private Vector3f _back=null;
     private Vector3f _center=null;
+    private String _centralNodeRequest=null;
+    private Spatial _centralNode=null;
 
     private Vector<ISceneComposition> _toAdd=new Vector<ISceneComposition>();
     private Vector<ISceneComposition> _sceneElements=

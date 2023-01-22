@@ -104,6 +104,7 @@ public class AutoChaseCam extends SceneComposition {
             _hudText.setText("Chasing "+s.getName());
             _chaseCam.setUpVector(Vector3f.UNIT_Y);
             _chaseCam.setEnabled(true);
+            _view.setCentralNode(s.getName());
         }
         else {
             if (_chaseCam!=null) {
