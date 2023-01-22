@@ -41,6 +41,7 @@ public class AutoChaseCam extends SceneComposition {
                 });
         _hudText=new BitmapText(_view.getGuiFont());
         _hudText.setColor(ColorRGBA.Yellow);
+_hudText.setColor(ColorRGBA.Red);
         _hudText.setSize(_view.getGuiFont().getCharSet().getRenderedSize());
         _hudText.setLocalTranslation(10f,10f+_hudText.getLineHeight(),0);
         _hudText.setText("Hello Graem");
@@ -98,6 +99,8 @@ public class AutoChaseCam extends SceneComposition {
             _chaseCam.setMaxDistance(size*20f);
             _chaseCam.setDefaultDistance(size*8f);
             _chaseCam.setZoomSensitivity(size/5f);
+            Vector3f lookOffset=bound.getCenter().add(s.getLocalTranslation().mult(-1));
+            _chaseCam.setLookAtOffset(lookOffset);
 
             s.removeControl(ChaseCamera.class);
             s.addControl(_chaseCam);
