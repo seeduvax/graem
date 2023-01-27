@@ -20,7 +20,7 @@ import com.jme3.scene.Node;
 /**
  *
  */
-public class Axes extends Avatar implements ISceneComposition {
+public class Axes extends Avatar {
     private Node _axes;
     private AssetManager _assetManager;
     private float _width=8;
@@ -46,23 +46,13 @@ public class Axes extends Avatar implements ISceneComposition {
         parent.attachChild(g);    
     }
 
-    @Override public void build(View view) {
-        Node parent=view.getRootNode();
-        _assetManager=view.getAssetManager();
-        _axes=new Node(getName());
-        parent.attachChild(_axes);
-        addAxe("X",_axes,new Vector3f(_size,0,0),ColorRGBA.Red);
-        addAxe("Y",_axes,new Vector3f(0,_size,0),ColorRGBA.Green);
-        addAxe("Z",_axes,new Vector3f(0,0,_size),ColorRGBA.Blue);
+    @Override protected Node build() {
+        _assetManager=getView().getAssetManager();
+        Node n=super.build();
+        addAxe("X",n,new Vector3f(_size,0,0),ColorRGBA.Red);
+        addAxe("Y",n,new Vector3f(0,_size,0),ColorRGBA.Green);
+        addAxe("Z",n,new Vector3f(0,0,_size),ColorRGBA.Blue);
+        return n;
     }
 
-    @Override public synchronized void update(float tpf) {
-        double[] l=getLocation();
-        Vector3f lv=new Vector3f((float)l[0],(float)l[1],(float)l[2]);
-        _axes.setLocalTranslation(
-                _axes.getLocalTranslation().interpolateLocal(lv,0.2f));
-        Quaternion q=_axes.getLocalRotation();
-        q.nlerp(getAttitude(),0.2f);
-        _axes.setLocalRotation(q);
-    }
 }

@@ -24,13 +24,13 @@ public class Trajectory extends Avatar implements ISceneComposition {
     /**
      * Build material and root node of the trajectory.
      */  
-    @Override public void build(View view) {
-        _mat=new Material(view.getAssetManager(),"Common/MatDefs/Misc/Unshaded.j3md");
+    @Override protected Node build() {
+        Node node=super.build();
+        _mat=new Material(getView().getAssetManager(),"Common/MatDefs/Misc/Unshaded.j3md");
         _mat.getAdditionalRenderState().setLineWidth(2f);
         _mat.setColor("Color",new ColorRGBA(_r,_g,_b,1.0f));
-        _node=new Node(getName());
-        view.getRootNode().attachChild(_node);
         _count=0;
+        return node;
     }
 
     /**
@@ -66,7 +66,7 @@ public class Trajectory extends Avatar implements ISceneComposition {
                 mesh.setBuffer(VertexBuffer.Type.Index, 2, new short[]{ 0, 1 });
                 mesh.updateBound();
                 mesh.updateCounts();
-                _node.attachChild(segment);
+                getNode().attachChild(segment);
                 _segStart[0]=(float)_loc[0];
                 _segStart[1]=(float)_loc[1];
                 _segStart[2]=(float)_loc[2];
@@ -85,7 +85,6 @@ public class Trajectory extends Avatar implements ISceneComposition {
     }
 
     private Material _mat;
-    private Node _node;
     private long _count;
     private float[] _segStart;
     private double[] _loc=null;
