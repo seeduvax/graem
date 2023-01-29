@@ -283,6 +283,8 @@ ex.printStackTrace();
         }
     }
 
+    
+
     public void setup(LuaValue cfgTable) {
         LuaValueIterator it=new LuaValueIterator(cfgTable);
         if (!cfgTable.get("import").isnil()) {
@@ -318,6 +320,10 @@ System.err.println("Can't bind " + dataName + " to " + attrName
     }
     public void bind(String dataName, Object o, LuaValue f) {
         _bindMap.bind(dataName,o,f);
+    }
+
+    public void setRelativeframe(boolean rf) {
+        _view.setRelativeFrame(rf);
     }
 
     public void set(LuaValue t) {

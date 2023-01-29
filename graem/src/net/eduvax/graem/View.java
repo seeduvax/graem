@@ -107,14 +107,15 @@ public class View extends SimpleApplication {
                 _toAdd.clear();
             }
         }
-        if (_back!=null) {
+        boolean translate=_relativeFrame;
+        if (translate&&_back!=null) {
             translateNodes(_back);
         }
         for (ISceneComposition c: _sceneElements) {
             c.update(tpf);
         }
         setCenter();
-        if (_center!=null) {
+        if (translate&&_center!=null) {
             translateNodes(_center);
         }
     }
@@ -138,6 +139,11 @@ public class View extends SimpleApplication {
         _centralNodeRequest=name;
     }
 
+    public void setRelativeFrame(boolean r) {
+        _relativeFrame=r;
+    }
+
+    private boolean _relativeFrame=true;
     private Vector3f _back=null;
     private Vector3f _center=null;
     private String _centralNodeRequest=null;
