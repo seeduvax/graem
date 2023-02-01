@@ -99,7 +99,7 @@ _hudText.setColor(ColorRGBA.Red);
             _chaseCam.setMaxDistance(size*20f);
             _chaseCam.setDefaultDistance(size*8f);
             _chaseCam.setZoomSensitivity(size/5f);
-            Vector3f lookOffset=bound.getCenter().add(s.getLocalTranslation().mult(-1));
+            Vector3f lookOffset=bound.getCenter().subtract(s.getLocalTranslation());
             _chaseCam.setLookAtOffset(lookOffset);
 
             s.removeControl(ChaseCamera.class);

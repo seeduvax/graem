@@ -121,9 +121,8 @@ public class View extends SimpleApplication {
     }
 
     private void translateNodes(Vector3f t) {
-        for (Spatial s: rootNode.getChildren()) {
-            s.setLocalTranslation(s.getLocalTranslation().add(t));
-        }
+        rootNode.setLocalTranslation(rootNode.getLocalTranslation().add(t));
+        cam.setLocation(cam.getLocation().add(t));
     }
     private void setCenter() {
         if (_centralNodeRequest!=null) {
