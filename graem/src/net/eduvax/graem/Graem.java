@@ -216,11 +216,11 @@ ex.printStackTrace();
                         LuaValueIterator bindIt=new LuaValueIterator(it.value());
                         while (bindIt.hasNext()) {
                             bindIt.next();
-                            if (bindIt.value().isstring()) {
-                                bind(bindIt.key().toString(),o,bindIt.value().toString());
+                            if (bindIt.key().isstring()) {
+                                bind(bindIt.value().toString(),o,bindIt.key().toString());
                             }
-                            else if (bindIt.value().isfunction()) {
-                                bind(bindIt.key().toString(),o,bindIt.value());
+                            else if (bindIt.key().isfunction()) {
+                                bind(bindIt.value().toString(),o,bindIt.key());
                             }
                         }
                     }

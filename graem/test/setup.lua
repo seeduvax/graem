@@ -1,7 +1,3 @@
-function setTime(o,t) 
-    o:setTime(t[0])
-end
-
 graem:setup({
     import={
         "net.eduvax.graem"
@@ -25,25 +21,24 @@ graem:setup({
         JMERef={
             class="BasisLLAtoJMErel",
             bind={
-                ["world.body.loc"]="v",
-                ["world.body.q"]="q",
+                v="world.body.loc",
+                q="world.body.q",
             }
         },
         ["Mobile Object Trajectory"]={
             class="Trajectory",
             bind={
-                time=setTime,
-                ["JMERef.v"]=function(a,v)
+                time="time",
+                [function(a,v)
                     a:setLocation(v)
-                end,
+                end]="JMERef.v",
             },
         },
         ["Mobile Object"]={
             class="DummyAvatar",
             bind={
-                time=setTime,
-                ["JMERef.v"]="location",
-                ["JMERef.q"]="attitude",
+                location="JMERef.v",
+                attitude="JMERef.q",
                 split="split"
             },
         },
@@ -51,10 +46,10 @@ graem:setup({
             class="HudText",
             x=10,y=600,
             bind={
-                time=function(a,v)
+                [function(a,v)
                     local str="t="..v[1].."s"
                     a:setText(str);
-                end
+                end]="time"
             },
         },
         cam={
