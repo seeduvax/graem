@@ -99,7 +99,7 @@ _hudText.setColor(ColorRGBA.Red);
             _chaseCam.setMaxDistance(size*20f);
             _chaseCam.setDefaultDistance(size*8f);
             _chaseCam.setZoomSensitivity(size/5f);
-            Vector3f lookOffset=bound.getCenter().subtract(s.getLocalTranslation());
+            Vector3f lookOffset=bound.getCenter().subtract(s.getLocalTranslation()).add(_offset);
             _chaseCam.setLookAtOffset(lookOffset);
 
             s.removeControl(ChaseCamera.class);
@@ -130,16 +130,27 @@ _hudText.setColor(ColorRGBA.Red);
         setChase(s);
     }
     public void setChase(String name) {
-        setChase(_root.getChild(name));
+        if(_root==null){
+            _initialChase=name;
+        }
+        else{
+            setChase(_root.getChild(name));
+        }
+    }
+    public void setOffsetX(double x) {
+        _offset.x=(float)x;
+    }
+    public void setOffsetY(double y) {
+        _offset.y=(float)y;
+    }
+    public void setOffsetZ(double z) {
+        _offset.z=(float)z;
     }
 
     @Override public void update(float tpf) {
-        if (_root.getChildren().size()!=_prevSize) {
-            // something has been added since last update
-            // switch cam on it.
-            _selAvatar=_root.getChildren().size()-1;
-            _prevSize=_root.getChildren().size();
-            setChase(_selAvatar);
+        if(_initialChase!=null){
+            setChase(_root.getChild(_initialChase));
+            _initialChase=null;
         }
     }
     
@@ -147,5 +158,7 @@ _hudText.setColor(ColorRGBA.Red);
     private Node _root;
     private int _prevSize;
     private int _selAvatar=0;
+    private String _initialChase;
+    private Vector3f _offset= new Vector3f(0f,0f,0f);
     private BitmapText _hudText;
 }

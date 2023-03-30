@@ -54,6 +54,8 @@ graem:setup({
         },
         cam={
             class="AutoChaseCam",
-        }
+            offsetY=20,
+            chase="Axes",
+        },
     },
 })
