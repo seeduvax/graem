@@ -346,7 +346,7 @@ System.err.println("Can't bind " + dataName + " to " + attrName
     }
 
 
-    public void dump(int level, Spatial from) {
+    public static void dump(int level, Spatial from) {
         for (int i=0;i<level;i++) {
             System.out.print("  ");
         }

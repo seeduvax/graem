@@ -68,7 +68,6 @@ _hudText.setColor(ColorRGBA.Red);
         }
     }
 
-    
     private ChaseCamera _chaseCam=null;
     private FlyByCamera _flyCam=null;
 

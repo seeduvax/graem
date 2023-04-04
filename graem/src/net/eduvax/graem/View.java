@@ -27,6 +27,9 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.font.BitmapFont;
 import com.jme3.math.Vector3f;
+import com.jme3.environment.LightProbeFactory;
+import com.jme3.light.LightProbe;
+import com.jme3.environment.EnvironmentCamera;
 
 /**
  *
@@ -65,6 +68,8 @@ public class View extends SimpleApplication {
                 if (pressed) handleEvent("prevCam");
             }
         },"prevCam");
+        final EnvironmentCamera envCam = new EnvironmentCamera(256, new Vector3f(0, 50f, 0));
+        stateManager.attach(envCam);
     }
 
     public Node getGuiNode() {
@@ -105,6 +110,11 @@ public class View extends SimpleApplication {
                     _sceneElements.add(comp);
                 }
                 _toAdd.clear();
+                if(_lightProbe==null){
+                    _lightProbe = LightProbeFactory.makeProbe(stateManager.getState(EnvironmentCamera.class), rootNode);
+                    _lightProbe.getArea().setRadius(100000000);
+                    rootNode.addLight(_lightProbe);
+                }
             }
         }
         boolean translate=_relativeFrame;
@@ -147,6 +157,7 @@ public class View extends SimpleApplication {
     private Vector3f _center=null;
     private String _centralNodeRequest=null;
     private Spatial _centralNode=null;
+    private LightProbe _lightProbe;
 
     private Vector<ISceneComposition> _toAdd=new Vector<ISceneComposition>();
     private Vector<ISceneComposition> _sceneElements=
@@ -161,5 +172,4 @@ public class View extends SimpleApplication {
             }
         }
     }
-    
 }

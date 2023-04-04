@@ -25,6 +25,10 @@ graem:setup({
                 q="world.body.q",
             }
         },
+        PBR={
+            class="SimpleAvatar",
+            modelPath="res/models/pbrTest.glb"
+        },
         ["Mobile Object Trajectory"]={
             class="Trajectory",
             bind={
@@ -54,7 +58,6 @@ graem:setup({
         },
         cam={
             class="AutoChaseCam",
-            offsetY=20,
             chase="Axes",
         },
     },
